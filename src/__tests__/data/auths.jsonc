@@ -1,0 +1,13 @@
+[
+    // owners
+    {
+        "id": "auth-1",
+        "email": "user1@fake.co",
+        "password": ""
+    },
+    {
+        "id": "auth-2",
+        "email": "user2@fake.co",
+        "password": ""
+    }
+]

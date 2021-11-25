@@ -9,7 +9,9 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "lb-tsc",
-    "clean": "lb-clean dist"
+    "clean": "lb-clean dist",
+    "test:unit": "lb-nyc npm run mocha:unit",
+    "mocha:unit": "lb-mocha -r ts-node/register \"src/**/*.unit.ts\""
   },
   "repository": {
     "type": "git",
@@ -27,6 +29,8 @@
   "homepage": "https://github.com/mschnee/loopback-graphql#readme",
   "devDependencies": {
     "@loopback/build": "^7.0.2",
+    "@loopback/testlab": "^4.0.0",
+    "ts-node": "^10.4.0",
     "typescript": "^4.4.4"
   },
   "dependencies": {

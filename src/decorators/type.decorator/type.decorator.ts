@@ -1,8 +1,9 @@
 import {ClassDecoratorFactory} from '@loopback/metadata';
+import {DecoratorKeys} from '../../keys';
 
 export function type() {
   return ClassDecoratorFactory.createDecorator(
-    'GRAPHQL_OBJECT_TYPE',
+    DecoratorKeys.TypeClass,
     {},
     {
       decoratorName: '@graphql.type',

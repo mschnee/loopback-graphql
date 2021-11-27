@@ -33,9 +33,9 @@ export class SchemaGenerator {
   protected namedOutputTypeRegistry: Map<string, GraphQLNamedOutputType> = new Map();
 
   constructor(
-    @inject.tag('graphql-js.types')
+    @inject.tag('graphql-js.types', {optional: true})
     protected graphqlTypeClasses: Constructor<{}>[],
-    @inject.tag('graphql-js.resolvers')
+    @inject.tag('graphql-js.resolvers', {optional: true})
     protected graphqlResolverClasses: Constructor<{}>[],
   ) {}
 

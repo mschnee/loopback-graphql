@@ -1,3 +1,5 @@
+import {BindingKey} from '@loopback/context';
+
 export namespace DecoratorKeys {
   /**
    * Class Keys
@@ -15,4 +17,10 @@ export namespace DecoratorKeys {
    * Property keys
    */
   export const TypeFieldProperty = 'io.loopback.graphql.decorator.property.GRAPHPQ_TYPE_FIELD';
+}
+
+export namespace BindingKeys {
+  export const GraphQLComponent = BindingKey.create('io.loopback.graphql.component');
+  export const GraphQLTypeBooter = BindingKey.create('io.loopback.graphql.booter.graphql-type');
+  export const GraphQLResolverBooter = BindingKey.create('io.loopback.graphql.booter.graphql-resolver');
 }

@@ -1,26 +1,33 @@
-import {
-  ArtifactOptions,
-  BaseArtifactBooter,
-  BootBindings,
-} from '@loopback/boot';
+import {ArtifactOptions, BaseArtifactBooter, BootBindings} from '@loopback/boot';
 import {
   Application,
   config,
+  ContextTags,
   CoreBindings,
   createBindingFromClass,
   inject,
+  injectable,
 } from '@loopback/core';
+import {BindingKeys} from '../keys';
 
+@injectable({
+  tags: {[ContextTags.KEY]: BindingKeys.GraphQLTypeBooter},
+})
 export class GraphqlTypeBooter extends BaseArtifactBooter {
   constructor(
     @inject(CoreBindings.APPLICATION_INSTANCE) public app: Application,
     @inject(BootBindings.PROJECT_ROOT) projectRoot: string,
-    @config() public booterConfiguration: ArtifactOptions = {},
+    @config(BindingKeys.GraphQLTypeBooter) public booterConfiguration: ArtifactOptions = {},
   ) {
     super(projectRoot, {
-      ...booterConfiguration,
       ...GraphqlTypeBooterDefaultOptions,
+      ...booterConfiguration,
     });
+    const opts = {
+      ...GraphqlTypeBooterDefaultOptions,
+      ...booterConfiguration,
+    };
+    console.log(opts);
   }
 
   async load() {

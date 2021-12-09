@@ -2,7 +2,8 @@ import {ClassDecoratorFactory} from '@loopback/metadata';
 import {DecoratorKeys} from '../../keys';
 
 export function type(options?: TypeDecoratorOptions) {
-  return function decorateClassAsGraphqlType(target: Function) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  return function decorateClassAsGraphqlType(target: any) {
     return ClassDecoratorFactory.createDecorator<TypeDecoratorSpec>(
       DecoratorKeys.TypeClass,
       {

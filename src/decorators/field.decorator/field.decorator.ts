@@ -9,12 +9,12 @@ import {NameOrTypeThunk, OptionsOrThunk} from '../../types';
  * @param typeThunk
  * @returns
  */
-export function field(nameOrTypeThunk: NameOrTypeThunk): MethodDecorator;
 export function field(
-  optionsOrThunk: OptionsOrThunk<FieldDecoratorOptions>,
-  nameOrTypeThunk?: NameOrTypeThunk,
+  nameOrTypeThunk: NameOrTypeThunk,
+  optionsOrThunk?: OptionsOrThunk<FieldDecoratorOptions>,
 ): PropertyDecorator {
-  return function decoratePropertyAsGraphqlField(target: Object, property: string | symbol) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  return function decoratePropertyAsGraphqlField(target: any, property: string | symbol) {
     const [options, nameThunk] = getOptionsAndThunk<FieldDecoratorOptions>(optionsOrThunk, nameOrTypeThunk);
 
     return PropertyDecoratorFactory.createDecorator(

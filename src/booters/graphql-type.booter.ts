@@ -36,7 +36,7 @@ export class GraphqlTypeBooter extends BaseArtifactBooter {
       const binding = createBindingFromClass(c, {
         namespace: 'graphql-js.types',
         name: c.name,
-      });
+      }).tag('graphql-js.types');
       this.app.add(binding);
     }
   }

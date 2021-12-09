@@ -20,11 +20,11 @@ describe('GraphqlTypeBooter', () => {
   class TestApplication extends BootMixin(Application) {
     constructor() {
       super();
-      this.projectRoot = path.resolve(__dirname);
+      this.projectRoot = path.resolve(__dirname, '../__tests__');
       this.configure<ArtifactOptions>(BindingKeys.GraphQLTypeBooter).to({
-        dirs: path.resolve(__dirname, '../__tests__/fixtures'),
+        dirs: 'fixtures',
         nested: true,
-        extensions: 'type.ts',
+        extensions: ['.type.ts'],
       });
       this.booters(GraphqlTypeBooter);
       this.service(BootedTypeService);

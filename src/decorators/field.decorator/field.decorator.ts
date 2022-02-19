@@ -2,6 +2,7 @@ import {PropertyDecoratorFactory} from '@loopback/metadata';
 import {DecoratorKeys} from '../../keys';
 import {getOptionsAndThunk} from '../../lib/get-options-and-thunk';
 import {NameOrTypeThunk, OptionsOrThunk} from '../../types';
+const debug = require('debug')('loopback:graphql:metadata:type:field');
 
 /**
  * M1- the field *MUST* have either a GraphQLScalar type, or be an object
@@ -13,10 +14,16 @@ export function field(
   nameOrTypeThunk: NameOrTypeThunk,
   optionsOrThunk?: OptionsOrThunk<FieldDecoratorOptions>,
 ): PropertyDecorator {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  return function decoratePropertyAsGraphqlField(target: any, property: string | symbol) {
-    const [options, nameThunk] = getOptionsAndThunk<FieldDecoratorOptions>(optionsOrThunk, nameOrTypeThunk);
+  return function decoratePropertyAsGraphqlField(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    target: any,
+    property: string | symbol,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    propertyDescriptor?: TypedPropertyDescriptor<any>,
+  ) {
+    debug(target, property, propertyDescriptor);
 
+    const [options, nameThunk] = getOptionsAndThunk<FieldDecoratorOptions>(optionsOrThunk, nameOrTypeThunk);
     return PropertyDecoratorFactory.createDecorator(
       DecoratorKeys.TypeFieldProperty,
       {

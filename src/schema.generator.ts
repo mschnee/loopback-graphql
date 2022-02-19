@@ -74,7 +74,7 @@ export class SchemaGenerator {
      *
      * If we do, we still need to register the type.
      */
-    const rootTypes = this.graphqlTypeClasses.map(this.buildType);
+    const rootTypes = this.graphqlTypeClasses.map(this.buildType.bind(this));
     return rootTypes;
   }
 
@@ -106,7 +106,7 @@ export class SchemaGenerator {
   getFieldsForClass(classDef: Function): ThunkObjMap<GraphQLFieldConfig<any, any>> {
     const fieldSpecs = MetadataInspector.getAllPropertyMetadata<FieldDecoratorSpec>(
       DecoratorKeys.TypeFieldProperty,
-      classDef,
+      classDef.prototype,
     );
 
     /**

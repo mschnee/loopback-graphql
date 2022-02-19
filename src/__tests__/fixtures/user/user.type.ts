@@ -2,7 +2,7 @@ import {GraphQLBoolean, GraphQLFloat, GraphQLInt, GraphQLString} from 'graphql';
 import {graphql} from '../../../decorators';
 
 @graphql.type()
-export class User {
+export class TestUserType {
   @graphql.field(() => GraphQLBoolean)
   boolField: boolean;
 

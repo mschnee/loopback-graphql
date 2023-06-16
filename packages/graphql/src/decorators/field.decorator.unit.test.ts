@@ -1,16 +1,15 @@
 import {MetadataInspector} from '@loopback/metadata';
-import {expect} from '@loopback/testlab';
+import {expect} from 'chai';
 import {GraphQLString} from 'graphql';
-import {graphql} from '..';
-import {DecoratorKeys} from '../../keys';
-import {FieldDecoratorOptions} from './field.decorator';
+import {FieldDecoratorOptions, field} from './field.decorator';
+import * as DecoratorKeys from './keys';
 
 describe('@graphql.query()', () => {
   it('gets the class thunk from @graphql.resolver() if unset', () => {
     function testFn() {
       class TestType {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        @graphql.field(() => GraphQLString, {name: 'someStringField'})
+        @field(() => GraphQLString, {name: 'someStringField'})
         someField: string;
       }
       return TestType;
@@ -22,6 +21,6 @@ describe('@graphql.query()', () => {
       cls.prototype,
       'someField',
     );
-    expect(spec).to.not.be.undefined();
+    expect(spec).to.exist;
   });
 });

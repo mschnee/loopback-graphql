@@ -1,7 +1,7 @@
 import {PropertyDecoratorFactory} from '@loopback/metadata';
 import debug from 'debug';
 import {getOptionsAndThunk} from '../lib/get-options-and-thunk';
-import {NameOrTypeThunk, OptionsOrThunk} from '../types';
+import {Maybe, NameOrClassOrTypeThunk, OptionsOrThunk} from '../types';
 import {TypeFieldProperty} from './keys';
 const debugLog = debug('loopback:graphql:metadata:type:field');
 
@@ -12,7 +12,7 @@ const debugLog = debug('loopback:graphql:metadata:type:field');
  * @returns
  */
 export function field(
-  nameOrTypeThunk: NameOrTypeThunk,
+  nameOrTypeThunk: NameOrClassOrTypeThunk,
   optionsOrThunk?: OptionsOrThunk<FieldDecoratorOptions>,
 ): PropertyDecorator {
   return function decoratePropertyAsGraphqlField(target, property, propertyDescriptor?: TypedPropertyDescriptor<any>) {
@@ -25,6 +25,10 @@ export function field(
         nameOrTypeThunk: nameThunk,
         fieldName: options?.name ?? property.toString(),
         nullable: options?.nullable ?? false,
+        description: options?.description,
+        defaultValue: options?.defaultValue,
+        deprecated: options?.deprecated ?? false,
+        deprecationReason: options?.deprecationReason,
       },
       {
         decoratorName: '@graphql.field',
@@ -34,12 +38,20 @@ export function field(
 }
 
 export interface FieldDecoratorSpec {
-  nameOrTypeThunk: NameOrTypeThunk;
+  nameOrTypeThunk: NameOrClassOrTypeThunk;
   fieldName: string;
   nullable: boolean;
+  description?: Maybe<string>;
+  defaultValue?: unknown;
+  deprecated: boolean;
+  deprecationReason?: Maybe<string>;
 }
 
 export interface FieldDecoratorOptions {
   name?: string; // optional fieldName
   nullable?: boolean;
+  description?: string;
+  defaultValue?: unknown;
+  deprecated?: boolean;
+  deprecationReason?: Maybe<string>;
 }

@@ -1,16 +1,17 @@
 import {ClassDecoratorFactory} from '@loopback/metadata';
 import {InputTypeClass as key} from './keys';
 
-export function inputType(options?: TypeDecoratorOptions): ClassDecorator {
+export function inputType(options?: InputTypeDecoratorOptions): ClassDecorator {
   return function decorateClassAsGraphqlInputType(target) {
     const typeName = options?.explicitTypeName ?? target.name;
     if (['query', 'mutation'].includes(typeName.toLowerCase())) {
       throw new Error(`Cannot name input type "${typeName}" as it conflicts with a reserved GraphQL Keyword.`);
     }
-    return ClassDecoratorFactory.createDecorator<TypeDecoratorSpec>(
+    return ClassDecoratorFactory.createDecorator<InputTypeDecoratorSpec>(
       key,
       {
         typeName,
+        description: options?.description,
       },
       {
         decoratorName: '@graphql.inputType',
@@ -19,7 +20,7 @@ export function inputType(options?: TypeDecoratorOptions): ClassDecorator {
   };
 }
 
-export interface TypeDecoratorSpec {
+export interface InputTypeDecoratorSpec {
   /**
    * For the SDL, we need an explicit, concrete, unique type name.
    * If we encounter a duplicate, we intentionally merge objects together.
@@ -27,11 +28,13 @@ export interface TypeDecoratorSpec {
    * If multiple classes of type "SomeType" implement the same FieldResolver, throw.
    */
   typeName: string;
+  description?: string;
 }
 
-export interface TypeDecoratorOptions {
+export interface InputTypeDecoratorOptions {
   /**
    * Defaults to Class.name.
    */
   explicitTypeName?: string;
+  description?: string;
 }

@@ -38,7 +38,7 @@ export interface TypeDecoratorOptions {
   /**
    * Defaults to Class.name.
    */
-  explicitTypeName?: string;
+  name?: string;
   description?: string;
   isTypeOf?: (value: any, info: GraphQLResolveInfo) => boolean;
 }

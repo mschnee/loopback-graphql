@@ -46,18 +46,13 @@ export function buildObjectTypeFields<TFunction extends Function>(
     }
     const result: ThunkObjMap<GraphQLFieldConfig<TFunction, GraphQLResolveInfo, any>> = {};
     for (const [key, spec] of Object.entries(specs)) {
-      result[key] = buildField(cache, spec, decoratedClass, key);
+      result[key] = buildField(cache, spec);
     }
     return result;
   };
 }
 
-export function buildField(
-  cache: NamedTypeMap,
-  spec: FieldDecoratorSpec,
-  decoratedClass: Function,
-  key: string,
-): GraphQLFieldConfig<any, any> {
+export function buildField(cache: NamedTypeMap, spec: FieldDecoratorSpec): GraphQLFieldConfig<any, any> {
   const maybeName = spec.nameOrTypeThunk();
   let type: GraphQLOutputType;
   if (typeof maybeName === 'string') {
@@ -71,8 +66,8 @@ export function buildField(
     type,
     description: spec.description,
     deprecationReason: spec.deprecationReason,
-    // args: buildFieldArguments(cache, spec, decoratedClass, key),
-    resolve: spec.resolve,
-    subscribe: spec.subscribe,
+    // args: buildFieldArguments(cache, spec, decoratedClass, key), -- handled by @arg()
+    // resolve: spec.resolve, -- handled by @fieldResolver()
+    // subscribe: spec.subscribe -- handled by @fieldSubscription(),
   };
 }

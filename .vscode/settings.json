@@ -41,5 +41,11 @@
     "readme*": "authors, backers*, changelog*, citation*, code_of_conduct*, codeowners, contributing*, contributors, copying, credits, governance.md, history.md, license*, maintainers, readme*, security.md, sponsors*",
     "shims.d.ts": "*.d.ts",
     "tsconfig.json": "tsconfig.*.json"
-  }
+  },
+  "mochaExplorer.logpanel": true,
+  "testExplorer.codeLens": true,
+  "testExplorer.gutterDecoration": true,
+  "mochaExplorer.files": "packages/**/*.test.ts",
+  "mochaExplorer.nodeArgv": ["--enable-source-maps", "--loader=tsx"],
+  "mochaExplorer.timeout": 0
 }

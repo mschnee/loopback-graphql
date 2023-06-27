@@ -1,10 +1,10 @@
 import {ClassDecoratorFactory} from '@loopback/metadata';
-import {GraphQLResolveInfo} from 'graphql';
+import type {GraphQLResolveInfo} from 'graphql';
 import {ObjectTypeClass as key} from './keys';
 
 export function objectType(options?: TypeDecoratorOptions): ClassDecorator {
   return function decorateClassAsGraphqlobjectType(target) {
-    const typeName = options?.explicitTypeName ?? target.name;
+    const typeName = options?.name ?? target.name;
     if (['query', 'mutation'].includes(typeName.toLowerCase())) {
       throw new Error(`Cannot name input type "${typeName}" as it conflicts with a reserved GraphQL Keyword.`);
     }

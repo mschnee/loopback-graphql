@@ -1,7 +1,9 @@
 {
-  "extends": "@loopback/build/config/tsconfig.common.json",
+  "extends": ["@tsconfig/esm/tsconfig.json", "@loopback/build/config/tsconfig.common.json"],
   "compilerOptions": {
-    "outDir": "dist"
+    "outDir": "dist",
+    "composite": true,
+    "module": "es2022",
   },
   "include": ["src"],
   "exclude": ["node_modules/**", "**/*.d.ts"]

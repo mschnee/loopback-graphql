@@ -1,9 +1,9 @@
-import {Constructor} from '@loopback/context';
-import {GraphQLInputType, GraphQLObjectType, GraphQLScalarType} from 'graphql';
+import type {Constructor} from '@loopback/context';
+import type {GraphQLInputType, GraphQLObjectType, GraphQLScalarType} from 'graphql';
+
 export type NameOrClassOrType = string | Constructor<{}> | GraphQLScalarType;
 export type NameOrClassOrTypeThunk = () => NameOrClassOrType;
 export type NameOrClassOrTypeThunkOrOptions<T> = NameOrClassOrTypeThunk | T;
-
 export type OptionsOrThunk<T> = T | NameOrClassOrTypeThunk;
 
 // from the graphql-js internal types

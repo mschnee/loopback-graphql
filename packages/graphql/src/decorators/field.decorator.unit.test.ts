@@ -1,7 +1,7 @@
 import {MetadataInspector} from '@loopback/metadata';
 import {expect} from 'chai';
 import {GraphQLString} from 'graphql';
-import {FieldDecoratorOptions, field} from './field.decorator';
+import {field, type FieldDecoratorOptions} from './field.decorator';
 import * as DecoratorKeys from './keys';
 
 describe('@graphql.query()', () => {

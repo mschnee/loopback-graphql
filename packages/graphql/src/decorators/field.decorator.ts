@@ -1,7 +1,7 @@
 import {PropertyDecoratorFactory} from '@loopback/metadata';
 import debug from 'debug';
 import {getOptionsAndThunk} from '../lib/get-options-and-thunk';
-import {Maybe, NameOrClassOrTypeThunk, OptionsOrThunk} from '../types';
+import type {Maybe, NameOrClassOrTypeThunk, OptionsOrThunk} from '../types';
 import {TypeFieldProperty} from './keys';
 const debugLog = debug('loopback:graphql:metadata:type:field');
 

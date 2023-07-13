@@ -128,7 +128,7 @@ export class BaseGraphQLSchemaBuilder extends GraphQLSchemaBuilderInterface {
       );
       const fieldSpecs = MetadataInspector.getAllPropertyMetadata<TypeFieldDecoratorMetadata>(
         DecoratorKeys.TypeFieldProperty,
-        t,
+        t.prototype,
       );
       if (classSpec?.typeName === n && fieldSpecs) {
         const allSpecs = Object.entries(fieldSpecs).map(([propertyName, spec]) => ({
@@ -176,7 +176,7 @@ export class BaseGraphQLSchemaBuilder extends GraphQLSchemaBuilderInterface {
           // find resolver for this field
           // find subscriber for this field
           // if there is a resolver, there are also args.
-          result[key] = this.buildTypeFieldForSpec(spec.spec);
+          result[spec.propertyName] = this.buildTypeFieldForSpec(spec.spec);
         }
       }
 

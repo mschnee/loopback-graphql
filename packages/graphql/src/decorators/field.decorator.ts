@@ -6,7 +6,11 @@ import {FieldResolverClass, FieldResolverMethod, TypeFieldProperty} from './keys
 const debugLog = debug('loopback:graphql:metadata:type:field');
 
 /**
- * This decorator is somewhat overloaded for convenience
+ * This convenience decorator has two uses:
+ * - on an ObjectType, InputType, or InterfaceType to describe a field on a GraphQL Type.
+ * - on a class or class method to provide the `resolve()` implementation of a GraphQL type field:
+ *   - on a class that implements a resolve() method
+ *   - on a method for a class decorated with `@resolver()`
  *
  * @param typeThunk
  * @returns
@@ -42,6 +46,9 @@ export function field(
        */
       if (!options?.name) {
         throw new Error('Decorating a class with `@field(Type, {name})` requires a field name.');
+      }
+      if (!Object.hasOwn(target.prototype, 'resolve')) {
+        throw new Error('Decorating a class with `@field(Type, {name})` requires a `resolve()` method on the class.');
       }
       return ClassDecoratorFactory.createDecorator<FieldResolverClassDecoratorMetadata>(
         FieldResolverClass,

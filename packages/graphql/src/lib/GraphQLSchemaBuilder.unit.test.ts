@@ -18,6 +18,7 @@ describe('GraphQLSchemaBuilder', () => {
       expect(schema).to.exist;
       const printedSdl = printSchema(schema!);
       expect(printedSdl).to.contain('MyType');
+      expect(printedSdl).to.contain('boolField: Boolean');
     });
   });
 });

@@ -8,7 +8,7 @@ export function objectType(options?: TypeDecoratorOptions): ClassDecorator {
     if (['query', 'mutation'].includes(typeName.toLowerCase())) {
       throw new Error(`Cannot name input type "${typeName}" as it conflicts with a reserved GraphQL Keyword.`);
     }
-    return ClassDecoratorFactory.createDecorator<TypeDecoratorSpec>(
+    return ClassDecoratorFactory.createDecorator<ObjectTypeDecoratorMetadata>(
       key,
       {
         typeName,
@@ -22,7 +22,7 @@ export function objectType(options?: TypeDecoratorOptions): ClassDecorator {
   };
 }
 
-export interface TypeDecoratorSpec {
+export interface ObjectTypeDecoratorMetadata {
   /**
    * For the SDL, we need an explicit, concrete, unique type name.
    * If we encounter a duplicate, we intentionally merge objects together.

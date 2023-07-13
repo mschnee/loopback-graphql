@@ -9,7 +9,7 @@ import {
   isType,
 } from 'graphql';
 import {FieldDecoratorSpec} from '../decorators/field.decorator';
-import {InputTypeDecoratorSpec} from '../decorators/inputType.decorator';
+import {InputTypeDecoratorMetadata} from '../decorators/inputType.decorator';
 import {DecoratorKeys} from '../keys';
 import {NameOrClassOrType, ObjMap, TypeCache} from '../types';
 
@@ -42,7 +42,7 @@ export function getOrBuildInputType(typeCache: TypeCache, t: NameOrClassOrType):
   }
 }
 export function buildInputType(typeCache: TypeCache, t: Function): GraphQLInputObjectType {
-  const spec = MetadataInspector.getClassMetadata<InputTypeDecoratorSpec>(DecoratorKeys.InputTypeClass, t);
+  const spec = MetadataInspector.getClassMetadata<InputTypeDecoratorMetadata>(DecoratorKeys.InputTypeClass, t);
 
   return new GraphQLInputObjectType({
     name: spec?.typeName || t.name,

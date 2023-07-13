@@ -2,7 +2,12 @@
 
 The purpose of this example is to provide a means via loopback to instantiate a GraphQLSchema using the reference implementation, [`graphql-js`](https://github.com/graphql/graphql-js).
 
-## Goals
+# Design
+
+- `ObjectType`, `InputType`, and `InterfaceType` are represented in code by DTOs, object decorated with `@objectType()`, `@inputType()`, and `@interfaceType()` respectively. GraphQL type inheretance/extension model does not match ECMAScript's, so we don't try to be fancy: an object type that implements one or more interfaces has to declare them via `@objectType({implements: [IOne, ITwo, ...INth]})` or `@objectImplements(IOne, ITwo, IThree, ...INth)`
+- These DTOs describe the shape of data but do not provide implementation.
+
+# Goals
 
 ### Phase 1
 

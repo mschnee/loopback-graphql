@@ -1,9 +1,9 @@
-import {NameOrClassOrTypeThunk, OptionsOrThunk} from '../types';
+import {type NameOrClassOrTypeThunk, type OptionsOrThunk} from '../types';
 
-export type OptOrThunkResult<T> = [T | undefined, NameOrClassOrTypeThunk | undefined];
+export type OptOrThunkResult<T> = [T | undefined, NameOrClassOrTypeThunk];
 export function getOptionsAndThunk<T>(
+  maybeThunk: NameOrClassOrTypeThunk,
   opts?: OptionsOrThunk<T>,
-  maybeThunk?: NameOrClassOrTypeThunk,
 ): OptOrThunkResult<T> {
   if (maybeThunk && typeof maybeThunk === 'function') {
     return [opts as T, maybeThunk];

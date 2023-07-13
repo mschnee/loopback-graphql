@@ -1,54 +1,71 @@
 import {MetadataInspector} from '@loopback/metadata';
 import {
+  GraphQLObjectType,
+  GraphQLSchema,
+  getNamedType,
+  isOutputType,
+  isType,
   type GraphQLFieldConfig,
   type GraphQLInputFieldConfig,
   type GraphQLInputType,
   type GraphQLNamedType,
-  GraphQLObjectType,
   type GraphQLOutputType,
   type GraphQLResolveInfo,
-  GraphQLSchema,
   type GraphQLSchemaConfig,
   type ThunkObjMap,
-  getNamedType,
-  isOutputType,
-  isType,
 } from 'graphql';
-import {type FieldDecoratorSpec} from '../decorators/field.decorator';
-import {type InputTypeDecoratorSpec} from '../decorators/inputType.decorator';
-import {type TypeDecoratorSpec} from '../decorators/objectType.decorator';
+import {type TypeFieldDecoratorMetadata} from '../decorators/field.decorator';
+import {type InputTypeDecoratorMetadata} from '../decorators/inputType.decorator';
+import {type ObjectTypeDecoratorMetadata} from '../decorators/objectType.decorator';
 import {DecoratorKeys} from '../keys';
-import {type Maybe, type NamedInputMap, type NamedTypeMap} from '../types';
-import {buildObjectType} from './build-object-type';
+import {type Maybe, type NamedFieldResolverMap, type NamedInputMap, type NamedTypeMap} from '../types';
 
 export abstract class GraphQLSchemaBuilderInterface {
   constructor(readonly typeClasses: Function[] = [], readonly resolverClasses: Function[] = []) {}
   abstract build(): GraphQLSchema;
-
-  abstract buildNamedTypes(): NamedTypeMap;
-  abstract buildNamedInputs(): NamedInputMap;
-
-  abstract getAllFieldSpecsForTypeByName(n: string): Array<{spec: FieldDecoratorSpec; decoratedClass: any}>;
-
+  abstract buildNamedObjectTypes(): NamedTypeMap;
+  abstract buildNamedInputTypes(): NamedInputMap;
+  abstract getAllFieldSpecsForTypeByName(n: string): Array<{spec: TypeFieldDecoratorMetadata; decoratedClass: any}>;
   abstract buildFieldsThunkForInput(t: Function): ThunkObjMap<GraphQLInputFieldConfig>;
   abstract buildFieldsThunkForType(t: Function): ThunkObjMap<GraphQLFieldConfig<any, any, any>>;
-  abstract buildTypeFieldForSpec(spec: FieldDecoratorSpec): GraphQLFieldConfig<any, any>;
+  abstract buildTypeFieldForSpec(spec: TypeFieldDecoratorMetadata): GraphQLFieldConfig<any, any>;
 }
 
 export class BaseGraphQLSchemaBuilder extends GraphQLSchemaBuilderInterface {
   typeCache: NamedTypeMap = {};
   inputCache: NamedInputMap = {};
+  resolverCache: NamedFieldResolverMap = new Map();
 
   options: GraphQLSchemaConfig = {};
-  buildNamedTypes(): NamedTypeMap {
+  buildNamedObjectTypes(): NamedTypeMap {
     this.typeClasses.forEach(t => {
-      const gqlTypeDefinition = buildObjectType(this.typeCache, t);
+      const gqlTypeDefinition = this.buildObjectType(t);
       this.typeCache[gqlTypeDefinition.name] = gqlTypeDefinition;
     });
     return this.typeCache;
   }
 
-  buildNamedInputs(): NamedInputMap {
+  buildObjectType<TFunction extends Function>(decoratedClass: TFunction): GraphQLObjectType {
+    const spec = MetadataInspector.getClassMetadata<ObjectTypeDecoratorMetadata>(
+      DecoratorKeys.ObjectTypeClass,
+      decoratedClass,
+    );
+    if (!spec) {
+      throw new Error(`Class '${decoratedClass.name}' is not decorated with ObjectTypeClass metadata`);
+    }
+
+    return new GraphQLObjectType({
+      name: spec.typeName,
+      description: spec.description,
+      isTypeOf: spec.isTypeOf,
+      /**
+       * The Schema Builder will replace this
+       */
+      fields: this.buildFieldsThunkForType(decoratedClass),
+    });
+  }
+
+  buildNamedInputTypes(): NamedInputMap {
     return this.inputCache;
   }
 
@@ -63,7 +80,10 @@ export class BaseGraphQLSchemaBuilder extends GraphQLSchemaBuilderInterface {
   getAllTypeNames(): string[] {
     return Array.from(
       Object.values(this.typeClasses).reduce((accum: Set<string>, t) => {
-        const classSpec = MetadataInspector.getClassMetadata<TypeDecoratorSpec>(DecoratorKeys.ObjectTypeClass, t);
+        const classSpec = MetadataInspector.getClassMetadata<ObjectTypeDecoratorMetadata>(
+          DecoratorKeys.ObjectTypeClass,
+          t,
+        );
         if (classSpec) {
           accum.add(classSpec.typeName);
         }
@@ -75,7 +95,10 @@ export class BaseGraphQLSchemaBuilder extends GraphQLSchemaBuilderInterface {
   getAllInputNames(): string[] {
     return Array.from(
       Object.values(this.resolverClasses).reduce((accum: Set<string>, t) => {
-        const classSpec = MetadataInspector.getClassMetadata<InputTypeDecoratorSpec>(DecoratorKeys.InputTypeClass, t);
+        const classSpec = MetadataInspector.getClassMetadata<InputTypeDecoratorMetadata>(
+          DecoratorKeys.InputTypeClass,
+          t,
+        );
         if (classSpec) {
           accum.add(classSpec.typeName);
         }
@@ -97,10 +120,13 @@ export class BaseGraphQLSchemaBuilder extends GraphQLSchemaBuilderInterface {
    */
   getAllFieldSpecsForTypeByName(
     n: string,
-  ): Array<{spec: FieldDecoratorSpec; decoratedClass: any; propertyName: string}> {
+  ): Array<{spec: TypeFieldDecoratorMetadata; decoratedClass: any; propertyName: string}> {
     return Object.values(this.typeClasses).reduce((accum, t) => {
-      const classSpec = MetadataInspector.getClassMetadata<TypeDecoratorSpec>(DecoratorKeys.ObjectTypeClass, t);
-      const fieldSpecs = MetadataInspector.getAllPropertyMetadata<FieldDecoratorSpec>(
+      const classSpec = MetadataInspector.getClassMetadata<ObjectTypeDecoratorMetadata>(
+        DecoratorKeys.ObjectTypeClass,
+        t,
+      );
+      const fieldSpecs = MetadataInspector.getAllPropertyMetadata<TypeFieldDecoratorMetadata>(
         DecoratorKeys.TypeFieldProperty,
         t,
       );
@@ -114,7 +140,7 @@ export class BaseGraphQLSchemaBuilder extends GraphQLSchemaBuilderInterface {
       } else {
         return accum;
       }
-    }, [] as Array<{spec: FieldDecoratorSpec; decoratedClass: any; propertyName: string}>);
+    }, [] as Array<{spec: TypeFieldDecoratorMetadata; decoratedClass: any; propertyName: string}>);
   }
 
   buildFieldsThunkForInput(t: Function): ThunkObjMap<GraphQLInputFieldConfig> {
@@ -132,7 +158,7 @@ export class BaseGraphQLSchemaBuilder extends GraphQLSchemaBuilderInterface {
   ): ThunkObjMap<GraphQLFieldConfig<TFunction, GraphQLResolveInfo, any>> {
     return () => {
       const result: ThunkObjMap<GraphQLFieldConfig<TFunction, GraphQLResolveInfo, any>> = {};
-      const classSpec = MetadataInspector.getClassMetadata<TypeDecoratorSpec>(
+      const classSpec = MetadataInspector.getClassMetadata<ObjectTypeDecoratorMetadata>(
         DecoratorKeys.ObjectTypeClass,
         decoratedClass,
       );
@@ -154,7 +180,7 @@ export class BaseGraphQLSchemaBuilder extends GraphQLSchemaBuilderInterface {
         }
       }
 
-      const fieldResolverSpecs = MetadataInspector.getAllMethodMetadata<FieldDecoratorSpec>(
+      const fieldResolverSpecs = MetadataInspector.getAllMethodMetadata<TypeFieldDecoratorMetadata>(
         DecoratorKeys.TypeFieldProperty,
         decoratedClass,
       );
@@ -168,8 +194,8 @@ export class BaseGraphQLSchemaBuilder extends GraphQLSchemaBuilderInterface {
     };
   }
 
-  buildTypeFieldForSpec(spec: FieldDecoratorSpec): GraphQLFieldConfig<any, any> {
-    const maybeName = spec.nameOrTypeThunk();
+  buildTypeFieldForSpec(spec: TypeFieldDecoratorMetadata): GraphQLFieldConfig<any, any> {
+    const maybeName = typeof spec.nameOrTypeThunk === 'function' ? spec.nameOrTypeThunk() : spec.nameOrTypeThunk;
     let type: Maybe<GraphQLOutputType> = undefined;
     if (typeof maybeName === 'string') {
       const gt = this.getTypeForName(maybeName);
@@ -197,8 +223,8 @@ export class BaseGraphQLSchemaBuilder extends GraphQLSchemaBuilderInterface {
     const types: GraphQLNamedType[] = [];
     return new GraphQLSchema({
       types: types.concat(
-        Object.values(this.buildNamedTypes()).map(v => getNamedType(v)),
-        Object.values(this.buildNamedInputs()).map(v => getNamedType(v)),
+        Object.values(this.buildNamedObjectTypes()).map(v => getNamedType(v)),
+        Object.values(this.buildNamedInputTypes()).map(v => getNamedType(v)),
       ),
     });
   }

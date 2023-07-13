@@ -1,7 +1,7 @@
 import {MetadataInspector} from '@loopback/metadata';
 import {expect} from 'chai';
 import {GraphQLString} from 'graphql';
-import {field, type FieldDecoratorOptions} from './field.decorator';
+import {field, type TypeFieldDecoratorOptions} from './field.decorator';
 import * as DecoratorKeys from './keys';
 
 describe('@graphql.query()', () => {
@@ -16,7 +16,7 @@ describe('@graphql.query()', () => {
     }
 
     const cls = testFn();
-    const spec = MetadataInspector.getPropertyMetadata<FieldDecoratorOptions>(
+    const spec = MetadataInspector.getPropertyMetadata<TypeFieldDecoratorOptions>(
       DecoratorKeys.TypeFieldProperty,
       cls.prototype,
       'someField',

@@ -13,7 +13,7 @@ describe('GraphQLSchemaBuilder.buildTypeMap', () => {
 
   it('builds a simple type', () => {
     const b = new BaseGraphQLSchemaBuilder([SimpleType]);
-    const typeMap = b.buildNamedTypes();
+    const typeMap = b.buildNamedObjectTypes();
     const entries = Object.entries(typeMap);
     expect(entries).to.have.lengthOf(1);
     const [name, spec] = entries[0];

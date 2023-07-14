@@ -5,7 +5,7 @@ export function inputType(options?: InputTypeDecoratorOptions): ClassDecorator {
   return function decorateClassAsGraphqlInputType(target) {
     const typeName = options?.explicitTypeName ?? target.name;
     if (['query', 'mutation'].includes(typeName.toLowerCase())) {
-      throw new Error(`Cannot name input type "${typeName}" as it conflicts with a reserved GraphQL Keyword.`);
+      throw new Error(`Cannot name input type "${typeName}" as it conflicts with a reserved root GraphQL Keyword.`);
     }
     return ClassDecoratorFactory.createDecorator<InputTypeDecoratorMetadata>(
       key,

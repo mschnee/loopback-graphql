@@ -9,7 +9,7 @@ describe('@graphql.query()', () => {
     function testFn() {
       class TestType {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        @field(() => GraphQLString, {name: 'someStringField'})
+        @field('someStringField', {type: () => GraphQLString, description: 'descritpion of a string field'})
         someField!: string;
       }
       return TestType;

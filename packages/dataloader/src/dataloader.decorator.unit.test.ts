@@ -61,7 +61,9 @@ describe('Dataloader Decorator', () => {
 
     @injectable()
     class TestService {
-      constructor(@inject('testDataLoader') private readonly dataloader: DataLoader<string, number>) {}
+      constructor(
+        @dataloader<string, number>('testDataLoader') private readonly dataloader: DataLoader<string, number>,
+      ) {}
       async get(ids: readonly string[]) {
         return this.dataloader.loadMany(ids);
       }

@@ -18,9 +18,20 @@ import {type TypeFieldDecoratorMetadata} from '../decorators/field.decorator.js'
 import {type InputTypeDecoratorMetadata} from '../decorators/inputType.decorator.js';
 import {type ObjectTypeDecoratorMetadata} from '../decorators/objectType.decorator.js';
 import {DecoratorKeys} from '../keys.js';
-import {type Maybe, type NamedFieldResolverMap, type NamedInputMap, type NamedTypeMap} from '../types.js';
+import {
+  type Maybe,
+  type NamedFieldResolverMap,
+  type NamedInputMap,
+  type NamedTypeMap,
+  type NamedUnionMap,
+} from '../types.js';
 
 export abstract class GraphQLSchemaBuilderInterface {
+  /**
+   *
+   * @param typeClasses this can be ALL decorated type classes: inputType, objectType, interfaceType, unionType.
+   * @param resolverClasses this is all classes decorated with `@resolver()` or `@field()`
+   */
   constructor(readonly typeClasses: Function[] = [], readonly resolverClasses: Function[] = []) {}
   abstract build(): GraphQLSchema;
   abstract buildNamedObjectTypes(): NamedTypeMap;
@@ -32,26 +43,29 @@ export abstract class GraphQLSchemaBuilderInterface {
 }
 
 export class BaseGraphQLSchemaBuilder extends GraphQLSchemaBuilderInterface {
-  typeCache: NamedTypeMap = {};
-  inputCache: NamedInputMap = {};
+  objectTypeCache: NamedTypeMap = {};
+  inputTypeCache: NamedInputMap = {};
+  unionTypeCache: NamedUnionMap = {};
   resolverCache: NamedFieldResolverMap = new Map();
 
   options: GraphQLSchemaConfig = {};
   buildNamedObjectTypes(): NamedTypeMap {
     this.typeClasses.forEach(t => {
       const gqlTypeDefinition = this.buildObjectType(t);
-      this.typeCache[gqlTypeDefinition.name] = gqlTypeDefinition;
+      if (gqlTypeDefinition) {
+        this.objectTypeCache[gqlTypeDefinition.name] = gqlTypeDefinition;
+      }
     });
-    return this.typeCache;
+    return this.objectTypeCache;
   }
 
-  buildObjectType<TFunction extends Function>(decoratedClass: TFunction): GraphQLObjectType {
+  buildObjectType<TFunction extends Function>(decoratedClass: TFunction): GraphQLObjectType | null {
     const spec = MetadataInspector.getClassMetadata<ObjectTypeDecoratorMetadata>(
       DecoratorKeys.ObjectTypeClass,
       decoratedClass,
     );
     if (!spec) {
-      throw new Error(`Class '${decoratedClass.name}' is not decorated with ObjectTypeClass metadata`);
+      return null;
     }
 
     return new GraphQLObjectType({
@@ -66,15 +80,19 @@ export class BaseGraphQLSchemaBuilder extends GraphQLSchemaBuilderInterface {
   }
 
   buildNamedInputTypes(): NamedInputMap {
-    return this.inputCache;
+    return this.inputTypeCache;
+  }
+
+  buildUnionTypes(): NamedUnionMap {
+    return this.unionTypeCache;
   }
 
   getTypeForName(name: string): Maybe<GraphQLObjectType> {
-    return this.typeCache[name];
+    return this.objectTypeCache[name];
   }
 
   getInputForName(name: string): Maybe<GraphQLInputType> {
-    return this.inputCache[name];
+    return this.inputTypeCache[name];
   }
 
   getAllTypeNames(): string[] {
@@ -195,7 +213,7 @@ export class BaseGraphQLSchemaBuilder extends GraphQLSchemaBuilderInterface {
   }
 
   buildTypeFieldForSpec(spec: TypeFieldDecoratorMetadata): GraphQLFieldConfig<any, any> {
-    const maybeName = typeof spec.nameOrTypeThunk === 'function' ? spec.nameOrTypeThunk() : spec.nameOrTypeThunk;
+    const maybeName = typeof spec.typeThunk === 'function' ? spec.typeThunk() : spec.typeThunk;
     let type: Maybe<GraphQLOutputType> = undefined;
     if (typeof maybeName === 'string') {
       const gt = this.getTypeForName(maybeName);

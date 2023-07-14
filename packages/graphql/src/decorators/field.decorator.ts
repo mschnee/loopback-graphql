@@ -6,6 +6,34 @@ import {FieldResolverClass, FieldResolverMethod, TypeFieldProperty} from './keys
 const debugLog = debug('loopback:graphql:metadata:type:field');
 
 /**
+ * Class Decorator, for a field resolver class providing a `resolve()` method
+ * @param nameOrTypeThunk
+ * @param optionsOrThunk
+ */
+export function field(
+  nameOrTypeThunk: NameOrClassOrTypeThunk,
+  optionsOrThunk?: OptionsOrThunk<FieldResolverClassDecoratorOptions>,
+): ClassDecorator;
+
+/**
+ * Method Decorator for a class decorated with `@resolver((of)=> Type)`
+ * @param nameOrTypeThunk
+ * @param optionsOrThunk
+ */
+export function field(
+  nameOrTypeThunk: NameOrClassOrTypeThunk,
+  optionsOrThunk?: OptionsOrThunk<FieldResolverMethodDecoratorOptions>,
+): MethodDecorator;
+
+/**
+ * Property decorator for classes decorated with `@inputType`, `@objectType`, or `@interfaceType`
+ * @param nameOrTypeThunk
+ * @param optionsOrThunk
+ */
+export function field(name: string, optionsOrThunk?: OptionsOrThunk<TypeFieldDecoratorOptions>): PropertyDecorator;
+export function field(optionsOrThunk: TypeFieldDecoratorOptions): PropertyDecorator;
+
+/**
  * This convenience decorator has two uses:
  * - on an ObjectType, InputType, or InterfaceType to describe a field on a GraphQL Type.
  * - on a class or class method to provide the `resolve()` implementation of a GraphQL type field:
@@ -16,18 +44,21 @@ const debugLog = debug('loopback:graphql:metadata:type:field');
  * @returns
  */
 export function field(
-  nameOrTypeThunk: NameOrClassOrTypeThunk,
-  optionsOrThunk?: OptionsOrThunk<
-    TypeFieldDecoratorOptions | FieldResolverMethodDecoratorOptions | FieldResolverClassDecoratorOptions
-  >,
-) {
-  const [options, nameThunk] = getOptionsAndThunk<TypeFieldDecoratorOptions>(nameOrTypeThunk, optionsOrThunk);
+  nameOrTypeThunk: TypeFieldDecoratorOptions | NameOrClassOrTypeThunk,
+  optionsOrThunk?:
+    | TypeFieldDecoratorOptions
+    | OptionsOrThunk<FieldResolverMethodDecoratorOptions | FieldResolverClassDecoratorOptions>,
+): ClassDecorator | MethodDecorator | PropertyDecorator {
   return function graphQlFieldWrapper(
     target: any,
-    property?: string,
+    property?: string | symbol,
     propertyDescriptor?: TypedPropertyDescriptor<any>,
   ) {
     if (property && propertyDescriptor) {
+      const [options, nameThunk] = getOptionsAndThunk<FieldResolverMethodDecoratorOptions>(
+        nameOrTypeThunk as NameOrClassOrTypeThunk,
+        optionsOrThunk as OptionsOrThunk<FieldResolverMethodDecoratorOptions>,
+      );
       /**
        * This is a method descriptor, for a resolver class object.  We'll decorate it now, but
        * later we need to determine if the `target` is decorated with `@resolver()`
@@ -40,6 +71,10 @@ export function field(
         {decoratorName: '@graphql.field'},
       )(target, property, propertyDescriptor);
     } else if (typeof target === 'function' && !property && !propertyDescriptor) {
+      const [options, nameThunk] = getOptionsAndThunk<FieldResolverClassDecoratorOptions>(
+        nameOrTypeThunk as NameOrClassOrTypeThunk,
+        optionsOrThunk as OptionsOrThunk<FieldResolverClassDecoratorOptions>,
+      );
       /**
        * This is a class being decorated with `@field()`, which means the class needs to provide a `resolve()` method, which
        * will be determined later.  Here we just add the metadata.
@@ -61,16 +96,20 @@ export function field(
         },
       )(target);
     } else if (target && property) {
+      const [maybeName, maybeOpts] = nameOrOptions<TypeFieldDecoratorOptions>(
+        nameOrTypeThunk as string | TypeFieldDecoratorOptions,
+        optionsOrThunk as TypeFieldDecoratorOptions | undefined,
+      );
       return PropertyDecoratorFactory.createDecorator<TypeFieldDecoratorMetadata>(
         TypeFieldProperty,
         {
-          nameOrTypeThunk: nameThunk,
-          fieldName: options?.name ?? property?.toString(),
-          nullable: options?.nullable ?? false,
-          description: options?.description,
-          defaultValue: options?.defaultValue,
-          deprecated: options?.deprecated ?? false,
-          deprecationReason: options?.deprecationReason,
+          typeThunk: maybeOpts.type,
+          fieldName: maybeName ?? property?.toString(),
+          nullable: maybeOpts.nullable ?? false,
+          description: maybeOpts.description,
+          defaultValue: maybeOpts.defaultValue,
+          deprecated: maybeOpts.deprecated ?? false,
+          deprecationReason: maybeOpts.deprecationReason,
         },
         {
           decoratorName: '@graphql.field',
@@ -80,8 +119,15 @@ export function field(
   };
 }
 
+function nameOrOptions<T>(nameOrOpts: string | T, maybeOpts?: T): [string | undefined, T] {
+  if ('string' === typeof nameOrOpts) {
+    return [nameOrOpts, maybeOpts!];
+  } else {
+    return [undefined, nameOrOpts];
+  }
+}
 export interface TypeFieldDecoratorMetadata {
-  nameOrTypeThunk: NameOrClassOrTypeThunk;
+  typeThunk: NameOrClassOrTypeThunk;
   fieldName: string;
   nullable: boolean;
   description?: Maybe<string>;
@@ -91,7 +137,7 @@ export interface TypeFieldDecoratorMetadata {
 }
 
 export interface TypeFieldDecoratorOptions {
-  name?: string; // optional fieldName
+  type: NameOrClassOrTypeThunk;
   nullable?: boolean;
   description?: string;
   defaultValue?: unknown;

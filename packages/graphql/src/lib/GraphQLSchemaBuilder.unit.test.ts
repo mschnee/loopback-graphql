@@ -7,25 +7,25 @@ import {BaseGraphQLSchemaBuilder} from './GraphQLSchemaBuilder.js';
 describe('GraphQLSchemaBuilder', () => {
   @objectType({name: 'MyType'})
   class SimpleType {
-    @field(() => GraphQLBoolean, {nullable: true, defaultValue: true})
+    @field({type: () => GraphQLBoolean, nullable: true, defaultValue: true})
     boolField!: boolean;
   }
 
   @objectType({name: 'MyScalarsType'})
   class MyScalersType {
-    @field(() => GraphQLBoolean, {nullable: true, defaultValue: true})
+    @field({type: () => GraphQLBoolean, nullable: true, defaultValue: true})
     boolField!: boolean;
 
-    @field(() => GraphQLInt, {nullable: true, defaultValue: 1})
+    @field({type: () => GraphQLInt, nullable: true, defaultValue: 1})
     intField!: number;
 
-    @field(() => GraphQLFloat, {nullable: true, defaultValue: 1.0})
+    @field({type: () => GraphQLFloat, nullable: true, defaultValue: 1.0})
     floatField!: number;
 
-    @field(() => GraphQLString, {nullable: true, defaultValue: 'string'})
+    @field({type: () => GraphQLString, nullable: true, defaultValue: 'string'})
     stringField!: string;
 
-    @field(() => GraphQLID, {nullable: true, defaultValue: 'id'})
+    @field({type: () => GraphQLID, nullable: true, defaultValue: 'id'})
     idField!: string;
   }
 

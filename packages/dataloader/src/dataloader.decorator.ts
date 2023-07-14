@@ -2,13 +2,33 @@ import {BindingScope, inject, injectable, type BindingAddress} from '@loopback/c
 import DataLoader from 'dataloader';
 
 type MaybeProperty = string | symbol;
-export function dataloader<K, V, C = K>(options?: DataLoader.Options<K, V, C> | BindingAddress<DataLoader<K, V, C>>) {
+
+/**
+ * Class decorator version only, a wrapper for `@injectable.provider()`.
+ * @param options
+ */
+export function dataloader<K, V, C = K>(options?: DataLoader.Options<K, V, C>): ClassDecorator;
+
+/**
+ * Parameter decorator version for injection, a wrapper for `@inject()`
+ * @param options
+ */
+export function dataloader<K, V, C = K>(options?: BindingAddress<DataLoader<K, V, C>>): ParameterDecorator;
+
+/**
+ * decorator implementation
+ * @param options
+ * @returns
+ */
+export function dataloader<K, V, C = K>(
+  options?: BindingAddress<DataLoader<K, V, C>> | DataLoader.Options<K, V, C>,
+): ClassDecorator | ParameterDecorator {
   return function dataloaderWrapper(
     target: any,
     property?: MaybeProperty,
     propertyDescriptor?: TypedPropertyDescriptor<any>,
   ) {
-    if (isDecoratingMethod(options, target, property, propertyDescriptor)) {
+    if (isDecoratingParameter(options, target, property, propertyDescriptor)) {
       // return MethodDecoratorFactory.createDecorator<DataLoaderMethodDecoratorMetadata<K, V, C>>(
       //   DataloaderParameterKey,
       //   {loaderBindingKey: options},
@@ -36,7 +56,7 @@ export interface DataLoaderClassDecoratorMetadata<K, V, C> {
   options?: DataLoader.Options<K, V, C>;
 }
 
-function isDecoratingMethod(
+function isDecoratingParameter(
   obj: any,
   target: any,
   property?: MaybeProperty,

@@ -1,4 +1,4 @@
-import {type NameOrClassOrTypeThunk, type OptionsOrThunk} from '../types';
+import {type NameOrClassOrTypeThunk, type OptionsOrThunk} from '../types.js';
 
 export type OptOrThunkResult<T> = [T | undefined, NameOrClassOrTypeThunk];
 export function getOptionsAndThunk<T>(

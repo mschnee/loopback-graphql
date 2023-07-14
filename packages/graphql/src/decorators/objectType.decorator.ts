@@ -1,6 +1,6 @@
 import {ClassDecoratorFactory} from '@loopback/metadata';
 import type {GraphQLResolveInfo} from 'graphql';
-import {ObjectTypeClass as key} from './keys';
+import {ObjectTypeClass as key} from './keys.js';
 
 export function objectType(options?: TypeDecoratorOptions): ClassDecorator {
   return function decorateClassAsGraphqlobjectType(target) {

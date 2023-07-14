@@ -1,8 +1,8 @@
 import {ClassDecoratorFactory, MethodDecoratorFactory, PropertyDecoratorFactory} from '@loopback/metadata';
 import debug from 'debug';
-import {getOptionsAndThunk} from '../lib/get-options-and-thunk';
-import type {Maybe, NameOrClassOrTypeThunk, OptionsOrThunk} from '../types';
-import {FieldResolverClass, FieldResolverMethod, TypeFieldProperty} from './keys';
+import {getOptionsAndThunk} from '../lib/get-options-and-thunk.js';
+import type {Maybe, NameOrClassOrTypeThunk, OptionsOrThunk} from '../types.js';
+import {FieldResolverClass, FieldResolverMethod, TypeFieldProperty} from './keys.js';
 const debugLog = debug('loopback:graphql:metadata:type:field');
 
 /**

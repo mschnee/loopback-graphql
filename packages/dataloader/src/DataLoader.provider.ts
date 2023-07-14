@@ -1,7 +1,7 @@
 import {BindingScope, injectable, MetadataInspector, type Provider, type ValueOrPromise} from '@loopback/context';
 import DataLoader from 'dataloader';
-import type {DataLoaderClassDecoratorMetadata} from './dataloader.decorator';
-import {DataloaderClassKey} from './keys';
+import type {DataLoaderClassDecoratorMetadata} from './dataloader.decorator.js';
+import {DataloaderClassKey} from './keys.js';
 
 @injectable.provider({scope: BindingScope.REQUEST})
 export class DataLoaderProvider<K, V, C = K> implements Provider<DataLoader<K, V, C>> {

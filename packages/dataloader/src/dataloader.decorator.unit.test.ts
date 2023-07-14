@@ -2,8 +2,8 @@ import {BindingScope, Context, inject, injectable} from '@loopback/context';
 import {expect} from 'chai';
 import type DataLoader from 'dataloader';
 import {fake} from 'sinon';
-import {DataLoaderProvider} from './DataLoader.provider';
-import {dataloader} from './dataloader.decorator';
+import {DataLoaderProvider} from './DataLoader.provider.js';
+import {dataloader} from './dataloader.decorator.js';
 
 describe('Dataloader Decorator', () => {
   it('allows creation of an injectable dataloader', async () => {

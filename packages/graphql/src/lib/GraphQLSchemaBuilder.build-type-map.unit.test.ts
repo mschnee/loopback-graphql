@@ -1,14 +1,14 @@
 import {expect} from 'chai';
 import {GraphQLBoolean} from 'graphql';
-import {field} from '../decorators/field.decorator';
-import {objectType} from '../decorators/objectType.decorator';
-import {BaseGraphQLSchemaBuilder} from './GraphQLSchemaBuilder';
+import {field} from '../decorators/field.decorator.js';
+import {objectType} from '../decorators/objectType.decorator.js';
+import {BaseGraphQLSchemaBuilder} from './GraphQLSchemaBuilder.js';
 
 describe('GraphQLSchemaBuilder.buildTypeMap', () => {
   @objectType({name: 'MyType'})
   class SimpleType {
     @field(() => GraphQLBoolean, {nullable: true, defaultValue: true})
-    boolField: boolean;
+    boolField!: boolean;
   }
 
   it('builds a simple type', () => {

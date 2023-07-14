@@ -1,5 +1,5 @@
 import {ClassDecoratorFactory} from '@loopback/metadata';
-import {InputTypeClass as key} from './keys';
+import {InputTypeClass as key} from './keys.js';
 
 export function inputType(options?: InputTypeDecoratorOptions): ClassDecorator {
   return function decorateClassAsGraphqlInputType(target) {

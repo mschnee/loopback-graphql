@@ -1,32 +1,32 @@
 import {expect} from 'chai';
 import {GraphQLBoolean, GraphQLFloat, GraphQLID, GraphQLInt, GraphQLSchema, GraphQLString, printSchema} from 'graphql';
-import {field} from '../decorators/field.decorator';
-import {objectType} from '../decorators/objectType.decorator';
-import {BaseGraphQLSchemaBuilder} from './GraphQLSchemaBuilder';
+import {field} from '../decorators/field.decorator.js';
+import {objectType} from '../decorators/objectType.decorator.js';
+import {BaseGraphQLSchemaBuilder} from './GraphQLSchemaBuilder.js';
 
 describe('GraphQLSchemaBuilder', () => {
   @objectType({name: 'MyType'})
   class SimpleType {
     @field(() => GraphQLBoolean, {nullable: true, defaultValue: true})
-    boolField: boolean;
+    boolField!: boolean;
   }
 
   @objectType({name: 'MyScalarsType'})
   class MyScalersType {
     @field(() => GraphQLBoolean, {nullable: true, defaultValue: true})
-    boolField: boolean;
+    boolField!: boolean;
 
     @field(() => GraphQLInt, {nullable: true, defaultValue: 1})
-    intField: number;
+    intField!: number;
 
     @field(() => GraphQLFloat, {nullable: true, defaultValue: 1.0})
-    floatField: number;
+    floatField!: number;
 
     @field(() => GraphQLString, {nullable: true, defaultValue: 'string'})
-    stringField: string;
+    stringField!: string;
 
     @field(() => GraphQLID, {nullable: true, defaultValue: 'id'})
-    idField: string;
+    idField!: string;
   }
 
   describe('.build', () => {

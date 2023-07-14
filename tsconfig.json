@@ -1,3 +1,9 @@
 {
-  "references": [{"path": "./packages/graphql"}]
+  "extends": "@tsconfig/node20/tsconfig.json",
+  "compilerOptions": {
+    "composite": true
+  },
+  "files": [],
+  "exclude": ["node_modules", "**/*/lib", "**/*/dist"],
+  "references": [{"path": "./packages/graphql"}, {"path": "./packages/dataloader"}]
 }

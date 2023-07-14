@@ -30,8 +30,8 @@
   "explorer.fileNesting.enabled": true,
   "explorer.fileNesting.expand": false,
   "explorer.fileNesting.patterns": {
-    "*.js": "$(capture).js.map, $(capture).*.js, $(capture)_*.js",
-    "*.mjs": "$(capture).mjs.map, $(capture).*.mjs, $(capture)_*.mjs",
+    "*.js": "$(capture).js.map, $(capture).*.js, $(capture)_*.js, $(capture).d.ts",
+    "*.mjs": "$(capture).mjs.map, $(capture).*.mjs, $(capture)_*.mjs, $(capture).d.ts",
     "*.module.ts": "$(capture).resolver.ts, $(capture).controller.ts, $(capture).service.ts",
     "*.decorator.ts": "$(capture).decorator.*.ts",
     "*.ts": "$(capture).js, $(capture).d.ts.map, $(capture).*.ts, $(capture)_*.js, $(capture)_*.ts",

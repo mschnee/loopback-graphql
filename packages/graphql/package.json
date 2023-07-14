@@ -2,7 +2,13 @@
   "version": "0.0.1",
   "name": "@mschnee-loopback/graphql",
   "type": "module",
+  "typings": "dist/index.d.ts",
+  "exports": {
+    ".": "./dist/index.js",
+    "./decorators": "./dist/graphql.decorators.js"
+  },
   "scripts": {
+    "build": "tsc --build",
     "test": "npm run test:unit",
     "test:cov": "npm run test:unit:cov",
     "test:unit": "mocha --loader=tsx \"src/**/*.unit.test.ts\"",

@@ -1,1 +1,1 @@
-export * as DecoratorKeys from './decorators/keys';
+export * as DecoratorKeys from './decorators/keys.js';

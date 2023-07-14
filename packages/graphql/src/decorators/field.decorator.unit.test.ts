@@ -1,8 +1,8 @@
 import {MetadataInspector} from '@loopback/metadata';
 import {expect} from 'chai';
 import {GraphQLString} from 'graphql';
-import {field, type TypeFieldDecoratorOptions} from './field.decorator';
-import * as DecoratorKeys from './keys';
+import {field, type TypeFieldDecoratorOptions} from './field.decorator.js';
+import * as DecoratorKeys from './keys.js';
 
 describe('@graphql.query()', () => {
   it('gets the class thunk from @graphql.resolver() if unset', () => {
@@ -10,7 +10,7 @@ describe('@graphql.query()', () => {
       class TestType {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         @field(() => GraphQLString, {name: 'someStringField'})
-        someField: string;
+        someField!: string;
       }
       return TestType;
     }

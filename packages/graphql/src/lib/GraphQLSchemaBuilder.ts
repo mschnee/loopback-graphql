@@ -14,11 +14,11 @@ import {
   type GraphQLSchemaConfig,
   type ThunkObjMap,
 } from 'graphql';
-import {type TypeFieldDecoratorMetadata} from '../decorators/field.decorator';
-import {type InputTypeDecoratorMetadata} from '../decorators/inputType.decorator';
-import {type ObjectTypeDecoratorMetadata} from '../decorators/objectType.decorator';
-import {DecoratorKeys} from '../keys';
-import {type Maybe, type NamedFieldResolverMap, type NamedInputMap, type NamedTypeMap} from '../types';
+import {type TypeFieldDecoratorMetadata} from '../decorators/field.decorator.js';
+import {type InputTypeDecoratorMetadata} from '../decorators/inputType.decorator.js';
+import {type ObjectTypeDecoratorMetadata} from '../decorators/objectType.decorator.js';
+import {DecoratorKeys} from '../keys.js';
+import {type Maybe, type NamedFieldResolverMap, type NamedInputMap, type NamedTypeMap} from '../types.js';
 
 export abstract class GraphQLSchemaBuilderInterface {
   constructor(readonly typeClasses: Function[] = [], readonly resolverClasses: Function[] = []) {}

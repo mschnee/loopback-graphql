@@ -78,5 +78,12 @@ describe('Dataloader Decorator', () => {
     const results2 = await testingService!.get(['1', '2', '3']);
     expect(results2).to.deep.equal([1, 2, 3]);
     expect(mockFind.callCount).to.equal(1);
+
+    // new request should use a new loader
+    const r2 = new Context(c);
+    const service2 = await r2.get<TestService>('testService', {optional: false});
+    const results3 = await service2!.get(['1', '2', '3']);
+    expect(results3).to.deep.equal([1, 2, 3]);
+    expect(mockFind.callCount).to.equal(2);
   });
 });

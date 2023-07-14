@@ -1,6 +1,8 @@
 import {ClassDecoratorFactory, MetadataInspector} from '@loopback/metadata';
-import {GraphQLObjectType, GraphQLResolveInfo} from 'graphql';
+import {GraphQLTypeResolver} from 'graphql';
+import {Maybe} from '../types.js';
 import {ObjectTypeClass, UnionTypeClass} from './keys.js';
+import {ObjectTypeDecoratorMetadata} from './objectType.decorator.js';
 
 export function unionType<T extends Function>(name: string, ...types: T[]): ClassDecorator;
 export function unionType<T extends Function>(name: string, options: UnionTypeOptions, ...types: T[]): ClassDecorator;
@@ -27,12 +29,12 @@ export function unionType<T extends Function>(name: string, options: UnionTypeOp
 export interface UnionTypeDecoratorMetadata<T extends Function[]> {
   name: string;
   types: T;
-  resolveType?: (value: any, info?: GraphQLResolveInfo) => GraphQLObjectType | null | undefined;
+  resolveType?: Maybe<GraphQLTypeResolver<T, any>>;
   description?: string;
 }
 
 export interface UnionTypeOptions {
-  resolveType?: (value: any, info?: GraphQLResolveInfo) => GraphQLObjectType | null | undefined;
+  resolveType?: Maybe<GraphQLTypeResolver<any, any>>;
   description?: string;
 }
 
@@ -40,7 +42,7 @@ function isOption<T extends Function>(o: T | UnionTypeOptions): o is UnionTypeOp
   return (typeof o === 'object' && 'resolveType' in o) || 'description' in o;
 }
 
-function isObjectType<T extends Function>(o: T | UnionTypeOptions): o is T {
-  const spec = typeof o === 'object' && MetadataInspector.getClassMetadata(ObjectTypeClass, o as any);
+function isObjectType<T extends Function>(decoratedClass: T | UnionTypeOptions): decoratedClass is T {
+  const spec = MetadataInspector.getClassMetadata<ObjectTypeDecoratorMetadata>(ObjectTypeClass, decoratedClass as any);
   return !!spec;
 }

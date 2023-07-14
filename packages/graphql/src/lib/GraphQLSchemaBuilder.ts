@@ -2,6 +2,7 @@ import {MetadataInspector} from '@loopback/metadata';
 import {
   GraphQLObjectType,
   GraphQLSchema,
+  GraphQLUnionType,
   getNamedType,
   isOutputType,
   isType,
@@ -17,6 +18,7 @@ import {
 import {type TypeFieldDecoratorMetadata} from '../decorators/field.decorator.js';
 import {type InputTypeDecoratorMetadata} from '../decorators/inputType.decorator.js';
 import {type ObjectTypeDecoratorMetadata} from '../decorators/objectType.decorator.js';
+import {UnionTypeDecoratorMetadata} from '../decorators/unionType.decorator.js';
 import {DecoratorKeys} from '../keys.js';
 import {
   type Maybe,
@@ -84,7 +86,29 @@ export class BaseGraphQLSchemaBuilder extends GraphQLSchemaBuilderInterface {
   }
 
   buildUnionTypes(): NamedUnionMap {
+    this.typeClasses.forEach(t => {
+      const gqlUnionTypeDefinition = this.buildUnionType(t);
+      if (gqlUnionTypeDefinition) {
+        this.unionTypeCache[gqlUnionTypeDefinition.name] = gqlUnionTypeDefinition;
+      }
+    });
     return this.unionTypeCache;
+  }
+
+  buildUnionType<TFunction extends Function>(decoratedClass: TFunction): GraphQLUnionType | null {
+    const spec = MetadataInspector.getClassMetadata<UnionTypeDecoratorMetadata<Function[]>>(
+      DecoratorKeys.UnionTypeClass,
+      decoratedClass,
+    );
+    if (!spec) {
+      return null;
+    }
+    return new GraphQLUnionType({
+      name: spec.name,
+      types: () => spec.types.map(t => this.getTypeForName(t.name)).filter(t => t) as GraphQLObjectType[],
+      description: spec.description,
+      resolveType: spec.resolveType ?? undefined,
+    });
   }
 
   getTypeForName(name: string): Maybe<GraphQLObjectType> {
@@ -243,6 +267,7 @@ export class BaseGraphQLSchemaBuilder extends GraphQLSchemaBuilderInterface {
       types: types.concat(
         Object.values(this.buildNamedObjectTypes()).map(v => getNamedType(v)),
         Object.values(this.buildNamedInputTypes()).map(v => getNamedType(v)),
+        Object.values(this.buildUnionTypes()).map(v => getNamedType(v)),
       ),
     });
   }

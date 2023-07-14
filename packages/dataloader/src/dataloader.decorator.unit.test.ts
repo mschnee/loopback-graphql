@@ -1,6 +1,7 @@
-import {Context, inject} from '@loopback/context';
+import {BindingScope, Context, inject, injectable} from '@loopback/context';
 import {expect} from 'chai';
 import type DataLoader from 'dataloader';
+import {fake} from 'sinon';
 import {DataLoaderProvider} from './DataLoader.provider';
 import {dataloader} from './dataloader.decorator';
 
@@ -29,5 +30,53 @@ describe('Dataloader Decorator', () => {
     expect(loader!.load).to.exist;
     let results = await loader!.loadMany(['1', '2', '3']);
     expect(results).to.deep.equal([11, 12, 13]);
+  });
+
+  it('only invokes our test repository once', async () => {
+    interface ITestRepo {
+      find(ids: readonly string[]): Promise<number[]>;
+    }
+    const mockFind = fake.resolves([1, 2, 3]);
+    const testRepo: ITestRepo = {
+      find: mockFind,
+    };
+    const c = new Context();
+    const r = new Context(c);
+    r.scope = BindingScope.REQUEST;
+
+    c.bind('testRepo').to(testRepo).inScope(BindingScope.SINGLETON);
+    @dataloader({
+      cache: true,
+    })
+    class TestDataLoader extends DataLoaderProvider<string, number> {
+      constructor(@inject('testRepo') private readonly repo: ITestRepo) {
+        super();
+      }
+      async load(keys: readonly string[]) {
+        return this.repo.find(keys);
+      }
+    }
+
+    c.bind('testDataLoader').toProvider(TestDataLoader);
+
+    @injectable()
+    class TestService {
+      constructor(@inject('testDataLoader') private readonly dataloader: DataLoader<string, number>) {}
+      async get(ids: readonly string[]) {
+        return this.dataloader.loadMany(ids);
+      }
+    }
+
+    c.bind('testService').toClass(TestService);
+
+    const testingService = await r.get<TestService>('testService', {optional: false});
+    expect(testingService).to.exist;
+    const results1 = await testingService!.get(['1', '2', '3']);
+    expect(results1).to.deep.equal([1, 2, 3]);
+    expect(mockFind.callCount).to.equal(1);
+
+    const results2 = await testingService!.get(['1', '2', '3']);
+    expect(results2).to.deep.equal([1, 2, 3]);
+    expect(mockFind.callCount).to.equal(1);
   });
 });

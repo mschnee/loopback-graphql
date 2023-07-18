@@ -38,6 +38,10 @@ export interface UnionTypeOptions {
   description?: string;
 }
 
+export interface UnionTypeOptionsWithName extends UnionTypeOptions {
+  name: string;
+}
+
 function isOption<T extends Function>(o: T | UnionTypeOptions): o is UnionTypeOptions {
   return (typeof o === 'object' && 'resolveType' in o) || 'description' in o;
 }

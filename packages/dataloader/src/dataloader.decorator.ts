@@ -26,15 +26,15 @@ export function dataloader<K, V, C = K>(
   return function dataloaderWrapper(
     target: any,
     property?: MaybeProperty,
-    propertyDescriptor?: TypedPropertyDescriptor<any>,
+    propertyDescriptor?: TypedPropertyDescriptor<any> | number,
   ) {
-    if (isDecoratingParameter(options, target, property, propertyDescriptor)) {
+    if (isDecoratingParameter(options, target, property, propertyDescriptor) && 'undefined' === typeof property) {
       // return MethodDecoratorFactory.createDecorator<DataLoaderMethodDecoratorMetadata<K, V, C>>(
       //   DataloaderParameterKey,
       //   {loaderBindingKey: options},
       //   {decoratorName: '@dataloader'},
       // )(target, property!, propertyDescriptor!);
-      return inject(options, {decorator: '@dataloader'})(target, property!.toString(), propertyDescriptor!);
+      return inject(options, {decorator: '@dataloader'})(target, property, propertyDescriptor!);
     } else if (isDecoratingClass(options, target, property, propertyDescriptor)) {
       if (!Object.hasOwn(target.prototype, 'load')) {
         throw new Error('Decorating a class with `@dataloader({options})` requires a `load()` method on the class.');
@@ -60,16 +60,16 @@ function isDecoratingParameter(
   obj: any,
   target: any,
   property?: MaybeProperty,
-  propertyDescriptor?: TypedPropertyDescriptor<any>,
+  propertyDescriptor?: TypedPropertyDescriptor<any> | number,
 ): obj is BindingAddress<any> {
-  return target && property && propertyDescriptor;
+  return target && !property && Number.isInteger(propertyDescriptor);
 }
 
 function isDecoratingClass<K, V, C>(
   obj: any,
   target: any,
   property?: MaybeProperty,
-  propertyDescriptor?: TypedPropertyDescriptor<any>,
+  propertyDescriptor?: TypedPropertyDescriptor<any> | number,
 ): obj is DataLoader.Options<K, V, C> {
   return target && !property && !propertyDescriptor;
 }

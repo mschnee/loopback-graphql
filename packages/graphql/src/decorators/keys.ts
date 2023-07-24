@@ -16,3 +16,5 @@ export const UnionTypeClass = `${keyBase}.class.GRAPHQL_UNION_TYPE_CLASS`;
 export const TypeFieldProperty = `${keyBase}.class.property.GRAPHQL_TYPE_FIELD_PROPERTY`;
 export const FieldResolverClass = `${keyBase}.class.GRAPHQL_RESOLVER_CLASS`;
 export const FieldResolverMethod = `${keyBase}.class.method.GRAPHQL_RESOLVER_METHOD`;
+
+export const EnumObjectClass = `${keyBase}.object.GRAPHQL_ENUM_OBJECT_CLASS`;

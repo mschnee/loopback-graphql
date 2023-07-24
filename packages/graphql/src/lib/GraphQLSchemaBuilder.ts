@@ -1,5 +1,6 @@
-import {MetadataInspector} from '@loopback/metadata';
+import {MetadataInspector, Reflector} from '@loopback/metadata';
 import {
+  GraphQLEnumType,
   GraphQLObjectType,
   GraphQLSchema,
   GraphQLUnionType,
@@ -21,6 +22,7 @@ import {type ObjectTypeDecoratorMetadata} from '../decorators/objectType.decorat
 import {UnionTypeDecoratorMetadata} from '../decorators/unionType.decorator.js';
 import {DecoratorKeys} from '../keys.js';
 import {
+  NamedEnumMap,
   type Maybe,
   type NamedFieldResolverMap,
   type NamedInputMap,
@@ -34,7 +36,7 @@ export abstract class GraphQLSchemaBuilderInterface {
    * @param typeClasses this can be ALL decorated type classes: inputType, objectType, interfaceType, unionType.
    * @param resolverClasses this is all classes decorated with `@resolver()` or `@field()`
    */
-  constructor(readonly typeClasses: Function[] = [], readonly resolverClasses: Function[] = []) {}
+  constructor(readonly typeClasses: Array<Function | Object> = [], readonly resolverClasses: Function[] = []) {}
   abstract build(): GraphQLSchema;
   abstract buildNamedObjectTypes(): NamedTypeMap;
   abstract buildNamedInputTypes(): NamedInputMap;
@@ -49,6 +51,7 @@ export class BaseGraphQLSchemaBuilder extends GraphQLSchemaBuilderInterface {
   inputTypeCache: NamedInputMap = {};
   unionTypeCache: NamedUnionMap = {};
   resolverCache: NamedFieldResolverMap = new Map();
+  enumTypeCache: NamedEnumMap = {};
 
   options: GraphQLSchemaConfig = {};
   buildNamedObjectTypes(): NamedTypeMap {
@@ -93,6 +96,25 @@ export class BaseGraphQLSchemaBuilder extends GraphQLSchemaBuilderInterface {
       }
     });
     return this.unionTypeCache;
+  }
+
+  buildEnumTypes(): NamedEnumMap {
+    this.typeClasses.forEach(t => {
+      const gqlEnumTypeDefinition = this.buildEnumType(t);
+      if (gqlEnumTypeDefinition) {
+        this.enumTypeCache[gqlEnumTypeDefinition.name] = gqlEnumTypeDefinition;
+      }
+    });
+    return this.enumTypeCache;
+  }
+
+  buildEnumType<T extends Object>(objectWithMetadata: T): GraphQLEnumType | null {
+    const spec = Reflector.getMetadata(DecoratorKeys.EnumObjectClass, objectWithMetadata);
+    if (!spec) {
+      return null;
+    } else {
+      return new GraphQLEnumType(spec);
+    }
   }
 
   buildUnionType<TFunction extends Function>(decoratedClass: TFunction): GraphQLUnionType | null {
@@ -268,6 +290,7 @@ export class BaseGraphQLSchemaBuilder extends GraphQLSchemaBuilderInterface {
         Object.values(this.buildNamedObjectTypes()).map(v => getNamedType(v)),
         Object.values(this.buildNamedInputTypes()).map(v => getNamedType(v)),
         Object.values(this.buildUnionTypes()).map(v => getNamedType(v)),
+        Object.values(this.buildEnumTypes()).map(v => getNamedType(v)),
       ),
     });
   }

@@ -37,7 +37,6 @@ type EnumResult<T extends EnumValue<string, any>[]> = {
 
 type NameOrTypeConfig = string | GraphQLEnumTypeConfig;
 
-export type ValueOf<T> = T[keyof T];
 export function Enum<K extends string, T extends EnumValue<K, any>[]>(
   nameOrConfig: NameOrTypeConfig,
   ...inputArray: T
@@ -85,3 +84,13 @@ function isName(nameOrConfig: NameOrTypeConfig): nameOrConfig is string {
 function isConfig(nameOrConfig: NameOrTypeConfig): nameOrConfig is GraphQLEnumTypeConfig {
   return typeof nameOrConfig !== 'string';
 }
+
+const TestEnum = Enum(
+  'ColorEnum',
+  'RED',
+  {name: 'GREEN', description: 'The color green', value: 'GREEN'},
+  {name: 'BLUE', value: 3},
+);
+
+export type ValueOf<T> = T[keyof T];
+type A = ValueOf<typeof TestEnum>;

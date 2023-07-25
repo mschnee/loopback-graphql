@@ -1,7 +1,7 @@
 import type {Constructor} from '@loopback/context';
 import type {GraphQLEnumType, GraphQLInputType, GraphQLObjectType, GraphQLScalarType, GraphQLUnionType} from 'graphql';
 
-export type NameOrClassOrType = string | Constructor<{}> | GraphQLScalarType;
+export type NameOrClassOrType = string | Constructor<{}> | GraphQLScalarType | Object;
 export type NameOrClassOrTypeThunk = string | (() => NameOrClassOrType);
 export type NameOrClassOrTypeThunkOrOptions<T> = NameOrClassOrTypeThunk | T;
 export type OptionsOrThunk<T> = T | NameOrClassOrTypeThunk;

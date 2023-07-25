@@ -6,7 +6,6 @@ import {
   GraphQLUnionType,
   getNamedType,
   isOutputType,
-  isType,
   type GraphQLFieldConfig,
   type GraphQLInputFieldConfig,
   type GraphQLInputType,
@@ -133,12 +132,16 @@ export class BaseGraphQLSchemaBuilder extends GraphQLSchemaBuilderInterface {
     });
   }
 
-  getTypeForName(name: string): Maybe<GraphQLObjectType> {
+  getTypeForName(name: string): Maybe<GraphQLOutputType> {
     return this.objectTypeCache[name];
   }
 
   getInputForName(name: string): Maybe<GraphQLInputType> {
     return this.inputTypeCache[name];
+  }
+
+  getEnumForName(name: string): Maybe<GraphQLEnumType> {
+    return this.enumTypeCache[name];
   }
 
   getAllTypeNames(): string[] {
@@ -190,6 +193,10 @@ export class BaseGraphQLSchemaBuilder extends GraphQLSchemaBuilderInterface {
         DecoratorKeys.ObjectTypeClass,
         t,
       );
+      if (!t.prototype) {
+        return accum;
+      }
+
       const fieldSpecs = MetadataInspector.getAllPropertyMetadata<TypeFieldDecoratorMetadata>(
         DecoratorKeys.TypeFieldProperty,
         t.prototype,
@@ -266,13 +273,21 @@ export class BaseGraphQLSchemaBuilder extends GraphQLSchemaBuilderInterface {
       if (isOutputType(gt)) {
         type = gt;
       }
-    } else if (isType(maybeName)) {
+    } else if (isOutputType(maybeName)) {
       type = maybeName;
+    }
+
+    if (!type) {
+      const enumSpec = Reflector.getMetadata(DecoratorKeys.EnumObjectClass, maybeName);
+      if (enumSpec) {
+        type = this.getEnumForName(enumSpec.name);
+      }
     }
 
     if (!type) {
       throw new Error('What am I?');
     }
+
     return {
       type,
       description: spec.description,
@@ -284,14 +299,15 @@ export class BaseGraphQLSchemaBuilder extends GraphQLSchemaBuilderInterface {
   }
 
   build() {
-    const types: GraphQLNamedType[] = [];
+    const accum: GraphQLNamedType[] = [];
+    const types = accum.concat(
+      Object.values(this.buildEnumTypes()).map(v => getNamedType(v)),
+      Object.values(this.buildNamedObjectTypes()).map(v => getNamedType(v)),
+      Object.values(this.buildNamedInputTypes()).map(v => getNamedType(v)),
+      Object.values(this.buildUnionTypes()).map(v => getNamedType(v)),
+    );
     return new GraphQLSchema({
-      types: types.concat(
-        Object.values(this.buildNamedObjectTypes()).map(v => getNamedType(v)),
-        Object.values(this.buildNamedInputTypes()).map(v => getNamedType(v)),
-        Object.values(this.buildUnionTypes()).map(v => getNamedType(v)),
-        Object.values(this.buildEnumTypes()).map(v => getNamedType(v)),
-      ),
+      types,
     });
   }
 }

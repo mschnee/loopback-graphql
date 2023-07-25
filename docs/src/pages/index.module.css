@@ -3,21 +3,31 @@
  * and scoped locally.
  */
 
-.heroBanner {
-  padding: 4rem 0;
+.hero {
+  display: flex;
+  justify-content: center;
   text-align: center;
+  color: white;
+  background-image: linear-gradient(to bottom, #009cff, #3f5dff);
+  z-index: 5;
   position: relative;
   overflow: hidden;
+  padding: 0;
 }
 
-@media screen and (max-width: 996px) {
-  .heroBanner {
-    padding: 2rem;
-  }
+.heroContainer {
+  overflow: hidden;
+  background: linear-gradient(to top, transparent, #3f5dff), url('/img/hero-illustration.svg');
+
+  background-repeat: no-repeat;
+  background-position: center center;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+  width: 100%;
 }
 
-.buttons {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.hero_title {
+  color: black;
 }

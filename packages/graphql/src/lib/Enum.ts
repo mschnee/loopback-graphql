@@ -28,8 +28,8 @@ import {type GraphQLEnumTypeConfig, type GraphQLEnumValueConfig, type GraphQLEnu
 import {DecoratorKeys} from '../keys.js';
 
 type EnumConfig<K extends string, V = any> = Omit<GraphQLEnumValueConfig, 'value'> & {name: K; value?: V};
-type EnumValue<K extends string, V = any> = EnumConfig<K, V> | K;
-type EnumResult<T extends EnumValue<string, any>[]> = {
+type EnumItem<K extends string, V = any> = EnumConfig<K, V> | K;
+type EnumResult<T extends EnumItem<string, any>[]> = {
   [K in T[number] as K extends EnumConfig<infer Name, infer Value> ? Name : K]: K extends EnumConfig<any, infer Value>
     ? Value
     : K;
@@ -37,7 +37,7 @@ type EnumResult<T extends EnumValue<string, any>[]> = {
 
 type NameOrTypeConfig = string | GraphQLEnumTypeConfig;
 
-export function Enum<K extends string, T extends EnumValue<K, any>[]>(
+export function Enum<K extends string, T extends EnumItem<K, any>[]>(
   nameOrConfig: NameOrTypeConfig,
   ...inputArray: T
 ): EnumResult<T> {
@@ -92,5 +92,4 @@ const TestEnum = Enum(
   {name: 'BLUE', value: 3},
 );
 
-export type ValueOf<T> = T[keyof T];
-type A = ValueOf<typeof TestEnum>;
+export type EnumValue<T> = T[keyof T];

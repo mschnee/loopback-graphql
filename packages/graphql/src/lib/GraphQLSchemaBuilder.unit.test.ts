@@ -2,7 +2,7 @@ import {expect} from 'chai';
 import {GraphQLBoolean, GraphQLFloat, GraphQLID, GraphQLInt, GraphQLSchema, GraphQLString, printSchema} from 'graphql';
 import {field} from '../decorators/field.decorator.js';
 import {objectType} from '../decorators/objectType.decorator.js';
-import {Enum, ValueOf} from './Enum.js';
+import {Enum, EnumValue} from './Enum.js';
 import {BaseGraphQLSchemaBuilder} from './GraphQLSchemaBuilder.js';
 
 describe('GraphQLSchemaBuilder', () => {
@@ -36,7 +36,7 @@ describe('GraphQLSchemaBuilder', () => {
     idField!: string;
 
     @field({type: () => ColorEnum})
-    enumField!: ValueOf<typeof ColorEnum>;
+    enumField!: EnumValue<typeof ColorEnum>;
   }
 
   describe('.build', () => {

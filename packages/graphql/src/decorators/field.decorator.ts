@@ -105,7 +105,8 @@ export function field(
         {
           typeThunk: maybeOpts.type,
           fieldName: maybeName ?? property?.toString(),
-          nullable: maybeOpts.nullable ?? false,
+          required: maybeOpts.required ?? false,
+          array: maybeOpts.array ?? false,
           description: maybeOpts.description,
           defaultValue: maybeOpts.defaultValue,
           deprecated: maybeOpts.deprecated ?? false,
@@ -129,7 +130,8 @@ function nameOrOptions<T>(nameOrOpts: string | T, maybeOpts?: T): [string | unde
 export interface TypeFieldDecoratorMetadata {
   typeThunk: NameOrClassOrTypeThunk;
   fieldName: string;
-  nullable: boolean;
+  required: boolean;
+  array: boolean;
   description?: Maybe<string>;
   defaultValue?: unknown;
   deprecated: boolean;
@@ -138,7 +140,8 @@ export interface TypeFieldDecoratorMetadata {
 
 export interface TypeFieldDecoratorOptions {
   type: NameOrClassOrTypeThunk;
-  nullable?: boolean;
+  required?: boolean;
+  array?: boolean;
   description?: string;
   defaultValue?: unknown;
   deprecated?: boolean;

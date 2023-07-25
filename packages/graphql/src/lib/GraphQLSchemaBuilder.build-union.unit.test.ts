@@ -8,13 +8,13 @@ import {Union} from './Union.js';
 describe('GraphQLSchemaBuilder.buildTypeMap', () => {
   @objectType({name: 'BoolType'})
   class BoolType {
-    @field({type: () => GraphQLBoolean, nullable: true, defaultValue: true})
+    @field({type: () => GraphQLBoolean, required: true, defaultValue: true})
     boolField!: boolean;
   }
 
   @objectType({name: 'IntType'})
   class IntType {
-    @field({type: () => GraphQLInt, nullable: true, defaultValue: true})
+    @field({type: () => GraphQLInt, required: true, defaultValue: true})
     intField!: number;
   }
 

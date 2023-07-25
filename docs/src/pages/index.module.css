@@ -8,7 +8,11 @@
   justify-content: center;
   text-align: center;
   color: white;
-  background-image: linear-gradient(to bottom, #009cff, #3f5dff);
+  background-image: linear-gradient(311deg, var(--color-blue), var(--color-blue-d), var(--color-blue-xd));
+  background-size: 600% 600%;
+  -webkit-animation: HeroAnimation 17s ease infinite;
+  -moz-animation: HeroAnimation 17s ease infinite;
+  animation: HeroAnimation 17s ease infinite;
   z-index: 5;
   position: relative;
   overflow: hidden;
@@ -17,8 +21,8 @@
 
 .heroContainer {
   overflow: hidden;
-  background: linear-gradient(to top, transparent, #3f5dff), url('/img/hero-illustration.svg');
-
+  background: linear-gradient(to top, transparent, var(--color-blue-d)), url('/img/hero-illustration.svg');
+  padding: 64px 0;
   background-repeat: no-repeat;
   background-position: center center;
   -webkit-background-size: cover;
@@ -30,4 +34,38 @@
 
 .hero_title {
   color: black;
+}
+
+@-webkit-keyframes HeroAnimation {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 51%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+@-moz-keyframes HeroAnimation {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 51%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+@keyframes HeroAnimation {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 51%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
 }

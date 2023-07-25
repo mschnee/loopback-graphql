@@ -1,6 +1,8 @@
 import {MetadataInspector, Reflector} from '@loopback/metadata';
 import {
   GraphQLEnumType,
+  GraphQLList,
+  GraphQLNonNull,
   GraphQLObjectType,
   GraphQLSchema,
   GraphQLUnionType,
@@ -287,6 +289,8 @@ export class BaseGraphQLSchemaBuilder extends GraphQLSchemaBuilderInterface {
     if (!type) {
       throw new Error('What am I?');
     }
+    type = spec.required ? new GraphQLNonNull(type) : type;
+    type = spec.array ? new GraphQLList(type) : type;
 
     return {
       type,

@@ -7,7 +7,7 @@ import {BaseGraphQLSchemaBuilder} from './GraphQLSchemaBuilder.js';
 describe('GraphQLSchemaBuilder.buildTypeMap', () => {
   @objectType({name: 'MyType'})
   class SimpleType {
-    @field({type: () => GraphQLBoolean, nullable: true, defaultValue: true})
+    @field({type: () => GraphQLBoolean, required: true, defaultValue: true})
     boolField!: boolean;
   }
 

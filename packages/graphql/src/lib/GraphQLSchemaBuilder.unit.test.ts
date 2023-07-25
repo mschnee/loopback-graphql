@@ -14,25 +14,25 @@ describe('GraphQLSchemaBuilder', () => {
   );
   @objectType({name: 'MyType'})
   class SimpleType {
-    @field({type: () => GraphQLBoolean, nullable: true, defaultValue: true})
+    @field({type: () => GraphQLBoolean, required: true, defaultValue: true})
     boolField!: boolean;
   }
 
   @objectType({name: 'MyScalarsType'})
   class MyScalersType {
-    @field({type: () => GraphQLBoolean, nullable: true, defaultValue: true})
+    @field({type: () => GraphQLBoolean, required: true, defaultValue: true, array: true})
     boolField!: boolean;
 
-    @field({type: () => GraphQLInt, nullable: true, defaultValue: 1})
+    @field({type: () => GraphQLInt, defaultValue: 1})
     intField!: number;
 
-    @field({type: () => GraphQLFloat, nullable: true, defaultValue: 1.0})
+    @field({type: () => GraphQLFloat, required: true, defaultValue: 1.0})
     floatField!: number;
 
-    @field({type: () => GraphQLString, nullable: true, defaultValue: 'string'})
+    @field({type: () => GraphQLString, defaultValue: 'string'})
     stringField!: string;
 
-    @field({type: () => GraphQLID, nullable: true, defaultValue: 'id'})
+    @field({type: () => GraphQLID, required: true, defaultValue: 'id'})
     idField!: string;
 
     @field({type: () => ColorEnum})
@@ -57,11 +57,11 @@ describe('GraphQLSchemaBuilder', () => {
       expect(schema).to.exist;
       const printedSdl = printSchema(schema!);
       expect(printedSdl).to.contain('type MyScalarsType {');
-      expect(printedSdl).to.contain('boolField: Boolean');
+      expect(printedSdl).to.contain('boolField: [Boolean!]');
       expect(printedSdl).to.contain('intField: Int');
-      expect(printedSdl).to.contain('floatField: Float');
+      expect(printedSdl).to.contain('floatField: Float!');
       expect(printedSdl).to.contain('stringField: String');
-      expect(printedSdl).to.contain('idField: ID');
+      expect(printedSdl).to.contain('idField: ID!');
     });
   });
 });

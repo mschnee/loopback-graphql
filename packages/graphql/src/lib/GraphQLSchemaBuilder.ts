@@ -36,7 +36,7 @@ export abstract class GraphQLSchemaBuilderInterface {
    * @param typeClasses this can be ALL decorated type classes: inputType, objectType, interfaceType, unionType.
    * @param resolverClasses this is all classes decorated with `@resolver()` or `@field()`
    */
-  constructor(readonly typeClasses: Array<Function | Object> = [], readonly resolverClasses: Function[] = []) {}
+  constructor(readonly typeClasses: Array<any> = [], readonly resolverClasses: Function[] = []) {}
   abstract build(): GraphQLSchema;
   abstract buildNamedObjectTypes(): NamedTypeMap;
   abstract buildNamedInputTypes(): NamedInputMap;

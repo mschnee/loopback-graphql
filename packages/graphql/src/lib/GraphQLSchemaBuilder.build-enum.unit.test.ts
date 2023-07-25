@@ -8,9 +8,10 @@ describe('GraphQLSchemaBuilder.buildTypeMap', () => {
     const EnumType = Enum(
       'ColorEnum',
       'RED',
-      {name: 'GREEN', description: 'The color green'},
+      {name: 'GREEN', description: 'The color green', value: 'GREEN'},
       {name: 'BLUE', value: 3},
     );
+
     const b = new BaseGraphQLSchemaBuilder([EnumType]);
     let schema: GraphQLSchema | undefined;
     expect(() => (schema = b.build())).to.not.throw();

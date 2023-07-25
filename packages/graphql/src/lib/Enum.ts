@@ -37,6 +37,7 @@ type EnumResult<T extends EnumValue<string, any>[]> = {
 
 type NameOrTypeConfig = string | GraphQLEnumTypeConfig;
 
+export type ValueOf<T> = T[keyof T];
 export function Enum<K extends string, T extends EnumValue<K, any>[]>(
   nameOrConfig: NameOrTypeConfig,
   ...inputArray: T

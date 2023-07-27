@@ -2,18 +2,16 @@ import {BindingScope, Context, inject, injectable} from '@loopback/context';
 import {expect} from 'chai';
 import type DataLoader from 'dataloader';
 import {fake} from 'sinon';
-import {DataLoaderProvider} from './DataLoader.provider.js';
 import {dataloader} from './dataloader.decorator.js';
+import {DataLoaderProviderInterface} from './types.js';
 
 describe('Dataloader Decorator', () => {
   it('allows creation of an injectable dataloader', async () => {
     @dataloader({
       cache: true,
     })
-    class TestDataLoader extends DataLoaderProvider<string, number> {
-      constructor(@inject('testPrefix') private readonly test: number) {
-        super();
-      }
+    class TestDataLoader implements DataLoaderProviderInterface<string, number> {
+      constructor(@inject('testPrefix') private readonly test: number) {}
       async load(keys: readonly string[]) {
         return keys.map(k => parseInt(k) + this.test);
       }
@@ -21,13 +19,12 @@ describe('Dataloader Decorator', () => {
 
     const c = new Context();
     c.bind('testPrefix').to(10);
-    c.bind('testDataLoader').toProvider(TestDataLoader);
+    c.bind('testDataLoader').toInjectable(TestDataLoader);
     const previxVal = await c.get('testPrefix');
     expect(previxVal).to.equal(10);
 
     const loader = await c.get<DataLoader<string, number>>('testDataLoader', {optional: false});
     expect(loader).to.exist;
-    expect(loader!.load).to.exist;
     let results = await loader!.loadMany(['1', '2', '3']);
     expect(results).to.deep.equal([11, 12, 13]);
   });
@@ -48,16 +45,14 @@ describe('Dataloader Decorator', () => {
     @dataloader({
       cache: true,
     })
-    class TestDataLoader extends DataLoaderProvider<string, number> {
-      constructor(@inject('testRepo') private readonly repo: ITestRepo) {
-        super();
-      }
+    class TestDataLoader implements DataLoaderProviderInterface<string, number> {
+      constructor(@inject('testRepo') private readonly repo: ITestRepo) {}
       async load(keys: readonly string[]) {
         return this.repo.find(keys);
       }
     }
 
-    c.bind('testDataLoader').toProvider(TestDataLoader);
+    c.bind('testDataLoader').toInjectable(TestDataLoader);
 
     @injectable()
     class TestService {

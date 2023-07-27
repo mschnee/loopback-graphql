@@ -1,7 +1,32 @@
-import {BindingScope, inject, injectable, type BindingAddress} from '@loopback/context';
+import {
+  BindingScope,
+  Constructor,
+  MetadataInspector,
+  Provider,
+  ValueOrPromise,
+  inject,
+  injectable,
+  type BindingAddress,
+} from '@loopback/context';
 import DataLoader from 'dataloader';
+import {DataloaderClassKey} from './keys.js';
+import {DataLoaderClassDecoratorMetadata, DataLoaderProviderInterface} from './types.js';
 
 type MaybeProperty = string | symbol;
+
+const LoaderSymbol = Symbol('dataloader');
+function BoundValueMethod<K, V, C = K>(
+  this: DataLoaderProviderInterface<K, V, C> & {[LoaderSymbol]?: DataLoader<K, V, C>},
+): ValueOrPromise<DataLoader<K, V, C>> {
+  const metadata = MetadataInspector.getClassMetadata<DataLoaderClassDecoratorMetadata<K, V, C>>(
+    DataloaderClassKey,
+    Object.getPrototypeOf(this),
+  );
+  if (!this[LoaderSymbol]) {
+    this[LoaderSymbol] = new DataLoader<K, V, C>(this.load.bind(this), metadata?.options);
+  }
+  return this[LoaderSymbol];
+}
 
 /**
  * Class decorator version only, a wrapper for `@injectable.provider()`.
@@ -39,21 +64,17 @@ export function dataloader<K, V, C = K>(
       if (!Object.hasOwn(target.prototype, 'load')) {
         throw new Error('Decorating a class with `@dataloader({options})` requires a `load()` method on the class.');
       }
+      if (!Object.hasOwn(target.prototype, 'value')) {
+        target.prototype.value = BoundValueMethod; //.bind(target);
+      }
+
       return injectable.provider(binding => {
         binding.inScope(BindingScope.REQUEST);
-      })(target);
+      })(target as Constructor<Provider<DataLoader<K, V, C>>>);
     } else {
       throw new Error('@dataloader can only be used on a class or a method parameter for injection.');
     }
   };
-}
-
-export interface DataLoaderMethodDecoratorMetadata<K, V, C> {
-  loaderBindingKey: BindingAddress<DataLoader<K, V, C>>;
-}
-
-export interface DataLoaderClassDecoratorMetadata<K, V, C> {
-  options?: DataLoader.Options<K, V, C>;
 }
 
 function isDecoratingParameter(

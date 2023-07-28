@@ -1,5 +1,12 @@
 import type {Constructor} from '@loopback/context';
-import type {GraphQLEnumType, GraphQLInputType, GraphQLObjectType, GraphQLScalarType, GraphQLUnionType} from 'graphql';
+import type {
+  GraphQLEnumType,
+  GraphQLInputType,
+  GraphQLInterfaceType,
+  GraphQLObjectType,
+  GraphQLScalarType,
+  GraphQLUnionType,
+} from 'graphql';
 
 export type NameOrClassOrType = string | Constructor<{}> | GraphQLScalarType | Object;
 export type NameOrClassOrTypeThunk = string | (() => NameOrClassOrType);
@@ -26,9 +33,10 @@ export declare type ReadOnlyObjMapLike<T> =
     };
 
 export declare type NamedInputMap = ObjMapLike<GraphQLInputType>;
-export declare type NamedTypeMap = ObjMapLike<GraphQLObjectType>;
+export declare type NamedObjectTypeMap = ObjMapLike<GraphQLObjectType>;
 export declare type NamedUnionMap = ObjMapLike<GraphQLUnionType>;
 export declare type NamedEnumMap = ObjMapLike<GraphQLEnumType>;
+export declare type NamedInterfaceType = ObjMapLike<GraphQLInterfaceType>;
 
 /**
  * Resolvers
@@ -53,5 +61,5 @@ export declare type NamedFieldResolverMap = Map<TypeName, Map<FieldName, Functio
  */
 export declare type TypeCache = {
   input: NamedInputMap;
-  object: NamedTypeMap;
+  object: NamedObjectTypeMap;
 };

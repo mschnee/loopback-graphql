@@ -6,9 +6,12 @@ on:
     branches: [main]
 
 permissions: {}
+env:
+  COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
+
 jobs:
-  test:
-    name: Test
+  unit-test:
+    name: Unit Tests
     timeout-minutes: 20
     strategy:
       matrix:
@@ -29,3 +32,18 @@ jobs:
         run: npm ci
       - name: Run Unit Tests
         run: npm run test:unit:cov
+      - name: Coveralls Parallel
+        uses: coverallsapp/github-action@v2
+        with:
+          flag-name: run-${{ join(matrix.*, '-') }}
+          parallel: true
+
+  unit-test-finished:
+    needs: unit-test
+    if: ${{ always() }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Coveralls Finished
+        uses: coverallsapp/github-action@v2
+        with:
+          parallel-finished: true

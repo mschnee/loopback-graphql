@@ -39,6 +39,7 @@ jobs:
           parallel: true
 
   unit-test-finished:
+    name: Unit Tests Finished
     needs: unit-test
     if: ${{ always() }}
     runs-on: ubuntu-latest

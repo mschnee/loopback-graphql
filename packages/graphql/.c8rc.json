@@ -1,5 +1,5 @@
 {
   "all": true,
   "skipFull": true,
-  "reporter": ["text-summary", "html"]
+  "reporter": ["text-summary", "lcov"]
 }

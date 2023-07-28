@@ -5,7 +5,7 @@ import {interfaceType} from '../decorators/interfaceType.decorator.js';
 import {objectType} from '../decorators/objectType.decorator.js';
 import {BaseGraphQLSchemaBuilder} from './GraphQLSchemaBuilder.js';
 
-describe('GraphQLSchemaBuilder.buildTypeMap', () => {
+describe('GraphQLSchemaBuilder @interfaceType()', () => {
   @interfaceType({name: 'InterfaceA'})
   class InterfaceA {
     @field({type: () => GraphQLBoolean, required: true, defaultValue: true})

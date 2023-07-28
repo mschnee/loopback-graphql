@@ -3,7 +3,7 @@ import {GraphQLSchema, printSchema} from 'graphql';
 import {Enum} from './Enum.js';
 import {BaseGraphQLSchemaBuilder} from './GraphQLSchemaBuilder.js';
 
-describe('GraphQLSchemaBuilder.buildTypeMap', () => {
+describe('GraphQLSchemaBuilder Enum()', () => {
   it('prints two types and a union', () => {
     const EnumType = Enum(
       'ColorEnum',

@@ -31,7 +31,7 @@ export function field(
  * @param optionsOrThunk
  */
 export function field(name: string, optionsOrThunk?: OptionsOrThunk<TypeFieldDecoratorOptions>): PropertyDecorator;
-export function field(optionsOrThunk: TypeFieldDecoratorOptions): PropertyDecorator;
+export function field(optionsOrThunk: OptionsOrThunk<TypeFieldDecoratorOptions>): PropertyDecorator;
 
 /**
  * This convenience decorator has two uses:

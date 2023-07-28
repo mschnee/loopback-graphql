@@ -43,29 +43,29 @@ export function Enum<K extends string, T extends EnumItem<K, any>[]>(
 ): EnumResult<T> {
   const result: any = {};
 
-  const attrs: GraphQLEnumValueConfigMap = {};
+  const values: GraphQLEnumValueConfigMap = {};
   for (const item of inputArray) {
     if (typeof item === 'string') {
       result[item] = item;
-      attrs[item] = {
+      values[item] = {
         value: item,
       };
     } else {
       const {name, ...rest} = item;
       result[name] = rest.value !== undefined ? rest.value : name;
-      attrs[item.name] = rest;
+      values[item.name] = rest;
     }
   }
 
   const [name, config] = getNameAndConfig(nameOrConfig);
   const spec: GraphQLEnumTypeConfig = {
     name,
+    values,
     ...config,
-    values: attrs,
   };
   Reflector.defineMetadata(DecoratorKeys.EnumObjectClass, spec, result);
   Object.freeze(result);
-  return result as EnumResult<T>;
+  return result;
 }
 
 function getNameAndConfig(nameOrConfig: NameOrTypeConfig): [string, GraphQLEnumTypeConfig | undefined] {
@@ -84,12 +84,5 @@ function isName(nameOrConfig: NameOrTypeConfig): nameOrConfig is string {
 function isConfig(nameOrConfig: NameOrTypeConfig): nameOrConfig is GraphQLEnumTypeConfig {
   return typeof nameOrConfig !== 'string';
 }
-
-const TestEnum = Enum(
-  'ColorEnum',
-  'RED',
-  {name: 'GREEN', description: 'The color green', value: 'GREEN'},
-  {name: 'BLUE', value: 3},
-);
 
 export type EnumValue<T> = T[keyof T];

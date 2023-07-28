@@ -6,7 +6,9 @@ export function interfaceType(options?: InterfaceTypeDecoratorOptions): ClassDec
   return function decorateClassAsGraphqlInterfaceType(target) {
     const typeName = options?.name ?? target.name;
     if (['query', 'mutation'].includes(typeName.toLowerCase())) {
-      throw new Error(`Cannot name type "${typeName}" as it conflicts with a reserved GraphQL Keyword.`);
+      throw new Error(
+        `Cannot name type "${typeName}" (class: ${target.name}) as it conflicts with a reserved GraphQL root type.`,
+      );
     }
     return ClassDecoratorFactory.createDecorator<InterfaceTypeDecoratorMetadata>(
       InterfaceTypeClass,

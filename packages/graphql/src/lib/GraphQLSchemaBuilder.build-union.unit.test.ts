@@ -5,7 +5,7 @@ import {objectType} from '../decorators/objectType.decorator.js';
 import {BaseGraphQLSchemaBuilder} from './GraphQLSchemaBuilder.js';
 import {Union} from './Union.js';
 
-describe('GraphQLSchemaBuilder.buildTypeMap', () => {
+describe('GraphQLSchemaBuilder Union()', () => {
   @objectType({name: 'BoolType'})
   class BoolType {
     @field({type: () => GraphQLBoolean, required: true, defaultValue: true})

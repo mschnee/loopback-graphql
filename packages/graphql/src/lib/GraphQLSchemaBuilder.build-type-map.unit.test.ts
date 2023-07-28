@@ -4,7 +4,7 @@ import {field} from '../decorators/field.decorator.js';
 import {objectType} from '../decorators/objectType.decorator.js';
 import {BaseGraphQLSchemaBuilder} from './GraphQLSchemaBuilder.js';
 
-describe('GraphQLSchemaBuilder.buildTypeMap', () => {
+describe('GraphQLSchemaBuilder @objectType()', () => {
   @objectType({name: 'MyType'})
   class SimpleType {
     @field({type: () => GraphQLBoolean, required: true, defaultValue: true})

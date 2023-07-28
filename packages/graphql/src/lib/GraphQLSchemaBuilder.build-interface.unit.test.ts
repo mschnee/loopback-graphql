@@ -29,6 +29,10 @@ describe('GraphQLSchemaBuilder.buildTypeMap', () => {
     expect(() => (schema = b.build())).to.not.throw();
     expect(schema).to.exist;
     const printedSdl = printSchema(schema!);
-    expect(printedSdl).to.contain('');
+    expect(printedSdl).to.contain('interface InterfaceA {\n  boolField: Boolean!\n}\n');
+    expect(printedSdl).to.contain('interface InterfaceB {\n  boolField: Boolean!\n  intField: Int!\n}\n');
+    expect(printedSdl).to.contain(
+      'type ObjectC implements InterfaceB & InterfaceA {\n  boolField: Boolean!\n  intField: Int!\n  stringField: String!\n}',
+    );
   });
 });

@@ -142,7 +142,7 @@ export class BaseGraphQLSchemaBuilder extends GraphQLSchemaBuilderInterface {
       /**
        * The Schema Builder will replace this
        */
-      fields: this.buildFieldsThunkForType(decoratedClass),
+      fields: this.buildFieldsThunkForInterface(decoratedClass),
     });
   }
 
@@ -358,19 +358,6 @@ export class BaseGraphQLSchemaBuilder extends GraphQLSchemaBuilderInterface {
           result[spec.propertyName] = this.buildTypeFieldForSpec(spec.spec);
         }
       }
-
-      const fieldResolverSpecs = MetadataInspector.getAllMethodMetadata<TypeFieldDecoratorMetadata>(
-        DecoratorKeys.TypeFieldProperty,
-        decoratedClass,
-        {
-          ownMetadataOnly: true,
-        },
-      );
-
-      /**
-       * Second: parse the resolver classes.
-       * TODO
-       */
 
       return result;
     };

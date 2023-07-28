@@ -1,0 +1,4 @@
+coverage
+dist
+.eslintrc.cjs
+docs

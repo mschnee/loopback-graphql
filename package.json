@@ -18,7 +18,17 @@
     "test:unit": "npm run test:unit --workspace=packages --if-present",
     "test:unit:cov": "npm run test:unit:cov --workspace=packages --if-present",
     "build:docs": "npm run build --workspace=docs",
-    "start:docs": "npm run start --workspace=docs"
+    "start:docs": "npm run start --workspace=docs",
+    "lint": "npm run eslint && npm run prettier:check",
+    "lint:fix": "npm run eslint:fix && npm run prettier:fix",
+    "eslint": "eslint --report-unused-disable-directives .",
+    "eslint:fix": "npm run eslint -- --fix",
+    "prettier:cli": "prettier \"**/*.ts\" \"**/*.js\" \"**/*.md\"",
+    "prettier:check": "npm run prettier:cli -- --check",
+    "prettier:fix": "npm run prettier:cli -- --write",
+    "prettier:docs": "prettier \"**/*.md\"",
+    "prettier:docs:check": "npm run prettier:docs -- --check",
+    "prettier:docs:fix": "npm run prettier:docs -- --write"
   },
   "repository": {
     "type": "git",
@@ -35,24 +45,24 @@
   },
   "homepage": "https://github.com/mschnee/loopback-graphql#readme",
   "devDependencies": {
-    "@loopback/build": "^10.0.0",
-    "@loopback/testlab": "^6.0.0",
-    "@tsconfig/esm": "^1.0.3",
-    "@tsconfig/node20": "^1.0.2",
+    "@loopback/build": "10.1.1",
+    "@loopback/testlab": "6.1.1",
+    "@tsconfig/esm": "1.0.4",
+    "@tsconfig/node20": "20.1.0",
     "@types/chai": "^4.3.5",
     "@types/mocha": "^10.0.1",
-    "c8": "^8.0.0",
+    "c8": "8.0.1",
     "chai": "^4.3.7",
     "mocha": "^10.2.0",
     "rimraf": "^5.0.1",
     "tsx": "^3.12.7",
-    "typescript": "^5.1.3"
+    "typescript": "5.1.6"
   },
   "dependencies": {
-    "@loopback/boot": "^6.0.0",
-    "@loopback/context": "^6.0.0",
-    "@loopback/core": "^5.0.0",
-    "@loopback/metadata": "^6.0.0",
-    "graphql": "^16.6.0"
+    "@loopback/boot": "6.1.1",
+    "@loopback/context": "6.1.1",
+    "@loopback/core": "5.1.1",
+    "@loopback/metadata": "6.1.1",
+    "graphql": "16.7.1"
   }
 }

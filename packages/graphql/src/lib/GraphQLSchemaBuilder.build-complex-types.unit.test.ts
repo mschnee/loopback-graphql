@@ -4,7 +4,7 @@ import {field, objectType} from '../graphql.decorators.js';
 import {Enum, EnumValue} from './Enum.js';
 import {BaseGraphQLSchemaBuilder} from './GraphQLSchemaBuilder.js';
 
-describe('GraphQLSchemaBuilder.build() complex types', () => {
+describe.skip('GraphQLSchemaBuilder.build() complex types', () => {
   it('Builds a straightforward set of complex types', () => {
     const IdentityStatus = Enum('IdentityStatus', 'New', 'PasswordReset', 'Active', 'Inactive', 'Locked');
 

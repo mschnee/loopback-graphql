@@ -1,0 +1,6 @@
+{
+  "packages": {
+    "packages/dataloader": {},
+    "packages/graphql": {}
+  }
+}

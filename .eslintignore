@@ -2,3 +2,4 @@ coverage
 dist
 .eslintrc.cjs
 docs
+commitlint.config.cjs

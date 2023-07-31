@@ -18,8 +18,8 @@ const boundNumber = ctx.get('SomeNumber'); // 15
 
 Everything in this section is a matter of opinion. The Loopback Team encourages you to have your own patterns to follow, and best practices to adhere to.
 
-:::Error
-**Bad** Using plain strings as binding keys.
+:::danger **Bad** Using plain strings as binding keys.
+
 :::
 
 ```ts
@@ -28,8 +28,10 @@ ctx.bind<number>('SomeNumber').toValue(15);
 
 :::
 
-:::Warning
+:::caution
+
 **Good** Use class names as binding keys.
+
 :::
 
 ```ts
@@ -41,8 +43,10 @@ class MyInjectableClass implements SomeInterface {}
 ctx.bind<SomeInterface>(MyInjectableClass.name).toClass(MyInjectableClass);
 ```
 
-:::Success
+:::tip
+
 **Better** Define constants (or constants in a namespace) that can be used to chare binding keys.
+
 :::
 This is the pattern that the `loopback-next` packages themselves use. I makes sharing binding keys trivial.
 
@@ -58,8 +62,10 @@ import {BindingKeys} from './keys';
 ctx.bind<number>(BindingKeys.SomeNumber).toValue(15);
 ```
 
-:::Success
+:::tip
+
 **Best** Use typed binding keys, and let the TypeScript langue server shine!
+
 :::
 
 ```ts

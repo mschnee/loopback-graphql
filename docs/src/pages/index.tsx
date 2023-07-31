@@ -1,5 +1,5 @@
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
-import HomepageFeatures from '@site/src/components/HomepageFeatures';
+import Admonition from '@theme/Admonition';
 import Layout from '@theme/Layout';
 import clsx from 'clsx';
 import React from 'react';
@@ -23,8 +23,22 @@ export default function Home(): JSX.Element {
   return (
     <Layout description="Documentation for @loopback/graphql">
       <HomepageHeader />
-      <main>
-        <HomepageFeatures />
+      <main className={clsx(styles.main)}>
+        <Admonition type="danger">
+          <h2>This is an extremely early Alpha Preview</h2>
+          <p>These packages:</p>
+          <ul>
+            <li>
+              do not conform or comply with <b>any Loopback standards</b>
+            </li>
+            <li>
+              do not work and are <b>not functional</b>
+            </li>
+            <li>
+              are <b>not suitable</b> for inclusion in the loopback monorepository
+            </li>
+          </ul>
+        </Admonition>
       </main>
     </Layout>
   );

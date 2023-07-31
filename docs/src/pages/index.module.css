@@ -36,6 +36,10 @@
   color: black;
 }
 
+.main {
+  margin: 64px;
+}
+
 @-webkit-keyframes HeroAnimation {
   0% {
     background-position: 0% 50%;

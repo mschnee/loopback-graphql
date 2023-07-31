@@ -1,6 +1,6 @@
 {
   "version": "0.0.1",
-  "name": "@mschnee-loopback/dataloader",
+  "name": "@mschnee/loopback-dataloader",
   "type": "module",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",

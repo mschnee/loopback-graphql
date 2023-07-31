@@ -1,6 +1,6 @@
 {
   "version": "0.0.1",
-  "name": "@mschnee-loopback/graphql",
+  "name": "@mschnee/loopback-graphql",
   "type": "module",
   "typings": "dist/index.d.ts",
   "exports": {

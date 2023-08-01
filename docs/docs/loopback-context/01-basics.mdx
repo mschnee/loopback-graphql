@@ -2,6 +2,8 @@
 sidebar_position: 1
 ---
 
+import Admonition from '@theme/Admonition'
+
 # Basics
 
 Loopback's Inversion of Control container, and how it performs Dependency Injection, begin with the `Context` object.
@@ -18,21 +20,17 @@ const boundNumber = ctx.get('SomeNumber'); // 15
 
 Everything in this section is a matter of opinion. The Loopback Team encourages you to have your own patterns to follow, and best practices to adhere to.
 
-:::danger **Bad** Using plain strings as binding keys.
-
-:::
+<Admonition type="danger" title="Bad">
+Using plain strings as binding keys.
+</Admonition>
 
 ```ts
 ctx.bind<number>('SomeNumber').toValue(15);
 ```
 
-:::
-
-:::caution
-
-**Good** Use class names as binding keys.
-
-:::
+<Admonition type="caution" title="Good">
+Use class names as binding keys.
+</Admonition>
 
 ```ts
 import {injectable, Context} from '@loopback/context';
@@ -43,11 +41,10 @@ class MyInjectableClass implements SomeInterface {}
 ctx.bind<SomeInterface>(MyInjectableClass.name).toClass(MyInjectableClass);
 ```
 
-:::tip
+<Admonition type="tip" title="Better">
+Define constants (or constants in a namespace) that can be used to chare binding keys.
+</Admonition>
 
-**Better** Define constants (or constants in a namespace) that can be used to chare binding keys.
-
-:::
 This is the pattern that the `loopback-next` packages themselves use. I makes sharing binding keys trivial.
 
 ```ts
@@ -62,11 +59,9 @@ import {BindingKeys} from './keys';
 ctx.bind<number>(BindingKeys.SomeNumber).toValue(15);
 ```
 
-:::tip
-
-**Best** Use typed binding keys, and let the TypeScript langue server shine!
-
-:::
+<Admonition type="tip" title="best">
+Use typed binding keys, and let the TypeScript langue server shine!
+</Admonition>
 
 ```ts
 // keys.ts

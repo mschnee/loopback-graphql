@@ -1,0 +1,56 @@
+# Usage
+
+## Decorating an injectable provider class
+
+The implementation of a DataLoader with `@mschnee/loopback-dataloader` is a [Provider Class](https://loopback.io/doc/en/lb4/Binding.html#a-provider) decorated with `@dataloader()`. The class must implement the `DataLoaderProviderInterface`.
+
+```ts DataLoaderProviderInterface.ts
+interface DataLoaderProviderInterface<Keytype, ValueType> {
+  load(keys: readonly Keytype[]): Promise<ReadonlyArray<ValueType | Error>>;
+}
+```
+
+:::tip Example
+:::
+
+```ts users.dataloader.ts
+import {inject} from '@loopback/context';
+import {dataloader, type DataLoaderProviderInterface} from '@mschnee/loopback-dataloader';
+import {UserObject} from './user.objectType.js';
+
+@dataloader()
+export class UsersByIdLoader implements DataLoaderProviderInterface<string, UserObject> {
+  constructor(@inject('datasources.db') protected datasource: juggler.DataSource) {}
+
+  async load(keys: readonly string[]): Promise<ReadonlyArray<UserObject>> {
+    const users = await this.datasource.execute('SELECT * FROM users WHERE id IN (?)', [keys]);
+    return keys.map(key => users.find(user => user.id === key));
+  }
+}
+```
+
+## Injecting a DataLoader
+
+The `@dataloader()` method parameter decorator is a simple wrapper for `@inject()` The binding scope is `BindingScope.REQUEST`.
+
+```ts users.resolver.ts
+import {inject} from '@loopback/context';
+import {resolver, query} from '@mschnee/loopback-graphql';
+import {dataloader} from '@mschnee/loopback-dataloader';
+import {type DataLoader} from 'dataloader';
+import {type UserObject} from './user.objectType.js';
+
+@resolver(() => UserObject)
+export class UserResolver {
+  constructor(@dataloader(UsersByIdLoader) protected readonly usersByIdLoader: DataLoader<string, UserObject>) {}
+
+  @query()
+  async queryUser(id: string): Promise<UserObject> {
+    return this.usersByIdLoader.load(id);
+  }
+}
+```
+
+## Scope
+
+DataLoaders, especially those used in GraphQL, must be scoped to a request.

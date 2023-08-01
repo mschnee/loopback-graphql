@@ -6,14 +6,14 @@ sidebar_position: 1
 
 :::caution
 
-`@loopback/graphql` is still under development and is not yet available in any registry.
+`@mschnee/loopback-graphql` is still under development and is not yet available in any registry.
 
 :::
 
-Loopback's GraphQL libraries provide a SOLID foundation by which you can easily use GraphQL in your applications. These libraries do not require a Loopback Server or Application. In fact, you can use `@loopback/graphql` to easily add graphql to your own application!
+Loopback's GraphQL libraries provide a SOLID foundation by which you can easily use GraphQL in your applications. These libraries do not require a Loopback Server or Application. In fact, you can use `@mschnee/loopback-graphql` to easily add graphql to your own application!
 
 ```ts
-import {GraphQLSchemaFactory, resolver, query} from '@loopback/graphql';
+import {GraphQLSchemaFactory, resolver, query} from '@mschnee/loopback-graphql';
 import {graphql, type GraphQLSchema} from 'graphql';
 
 @resolver()
@@ -34,10 +34,10 @@ graphql({
 });
 ```
 
-Where `@loopback/graphql` really brings the SOLID principles is making it easy to use dependency injection without requiring an additional framework.
+Where `@mschnee/loopback-graphql` really brings the SOLID principles is making it easy to use dependency injection without requiring an additional framework.
 
 ```ts
-import {GraphQLSchemaFactory, resolver, query} from '@loopback/graphql';
+import {GraphQLSchemaFactory, resolver, query} from '@mschnee/loopback-graphql';
 import {graphql, type GraphQLSchema} from 'graphql';
 import {MyEchoService} from './path/to/my-service';
 

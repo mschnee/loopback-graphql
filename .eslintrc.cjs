@@ -5,4 +5,12 @@ module.exports = {
   parserOptions: {
     project: './tsconfig.eslint.json',
   },
+  overrides: [
+    {
+      files: ['*.test.ts'],
+      rules: {
+        'no-unused-expressions': 'off',
+      },
+    },
+  ],
 };

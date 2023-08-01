@@ -52,5 +52,6 @@ describe.skip('GraphQLSchemaBuilder.build() complex types', () => {
     expect(() => (schema = builder.build())).to.not.throw();
     expect(schema).to.exist;
     const printedSdl = printSchema(schema!);
+    expect(printedSdl).to.exist;
   });
 });

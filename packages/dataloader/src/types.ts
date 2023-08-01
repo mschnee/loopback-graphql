@@ -9,6 +9,7 @@ export interface DataLoaderClassDecoratorMetadata<K, V, C> {
   options?: DataLoader.Options<K, V, C>;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export interface DataLoaderProviderInterface<K, V, C = K> {
   load(keys: ReadonlyArray<K>): PromiseLike<ArrayLike<V | Error>>;
 }

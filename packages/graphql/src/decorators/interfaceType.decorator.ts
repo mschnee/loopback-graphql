@@ -33,7 +33,7 @@ export interface InterfaceTypeDecoratorMetadata {
    */
   typeName: string;
   description?: string;
-  isTypeOf?: (value: any, info: GraphQLResolveInfo) => boolean;
+  isTypeOf?: (value: unknown, info: GraphQLResolveInfo) => boolean;
 }
 
 export interface InterfaceTypeDecoratorOptions {
@@ -42,5 +42,5 @@ export interface InterfaceTypeDecoratorOptions {
    */
   name?: string;
   description?: string;
-  isTypeOf?: (value: any, info: GraphQLResolveInfo) => boolean;
+  isTypeOf?: (value: unknown, info: GraphQLResolveInfo) => boolean;
 }

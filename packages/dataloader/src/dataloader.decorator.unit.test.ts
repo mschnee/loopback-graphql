@@ -25,7 +25,7 @@ describe('Dataloader Decorator', () => {
 
     const loader = await c.get<DataLoader<string, number>>('testDataLoader', {optional: false});
     expect(loader).to.exist;
-    let results = await loader!.loadMany(['1', '2', '3']);
+    const results = await loader!.loadMany(['1', '2', '3']);
     expect(results).to.deep.equal([11, 12, 13]);
   });
 
@@ -56,11 +56,9 @@ describe('Dataloader Decorator', () => {
 
     @injectable()
     class TestService {
-      constructor(
-        @dataloader<string, number>('testDataLoader') private readonly dataloader: DataLoader<string, number>,
-      ) {}
+      constructor(@dataloader<string, number>('testDataLoader') private readonly loader: DataLoader<string, number>) {}
       async get(ids: readonly string[]) {
-        return this.dataloader.loadMany(ids);
+        return this.loader.loadMany(ids);
       }
     }
 

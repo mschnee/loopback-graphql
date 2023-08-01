@@ -1,9 +1,7 @@
 import {ClassDecoratorFactory, MethodDecoratorFactory, PropertyDecoratorFactory} from '@loopback/metadata';
-import debug from 'debug';
 import {getOptionsAndThunk} from '../lib/get-options-and-thunk.js';
 import type {Maybe, NameOrClassOrTypeThunk, OptionsOrThunk} from '../types.js';
 import {FieldResolverClass, FieldResolverMethod, TypeFieldProperty} from './keys.js';
-const debugLog = debug('loopback:graphql:metadata:type:field');
 
 /**
  * Class Decorator, for a field resolver class providing a `resolve()` method
@@ -50,12 +48,12 @@ export function field(
     | OptionsOrThunk<FieldResolverMethodDecoratorOptions | FieldResolverClassDecoratorOptions>,
 ): ClassDecorator | MethodDecorator | PropertyDecorator {
   return function graphQlFieldWrapper(
-    target: any,
+    target: Function | Object,
     property?: string | symbol,
-    propertyDescriptor?: TypedPropertyDescriptor<any>,
+    propertyDescriptor?: TypedPropertyDescriptor<unknown>,
   ) {
     if (property && propertyDescriptor) {
-      const [options, nameThunk] = getOptionsAndThunk<FieldResolverMethodDecoratorOptions>(
+      const [options] = getOptionsAndThunk<FieldResolverMethodDecoratorOptions>(
         nameOrTypeThunk as NameOrClassOrTypeThunk,
         optionsOrThunk as OptionsOrThunk<FieldResolverMethodDecoratorOptions>,
       );

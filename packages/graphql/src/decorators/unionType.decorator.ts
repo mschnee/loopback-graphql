@@ -29,12 +29,12 @@ export function unionType<T extends Function>(name: string, options: UnionTypeOp
 export interface UnionTypeDecoratorMetadata<T extends Function[]> {
   name: string;
   types: T;
-  resolveType?: Maybe<GraphQLTypeResolver<T, any>>;
+  resolveType?: Maybe<GraphQLTypeResolver<T, unknown>>;
   description?: string;
 }
 
 export interface UnionTypeOptions {
-  resolveType?: Maybe<GraphQLTypeResolver<any, any>>;
+  resolveType?: Maybe<GraphQLTypeResolver<unknown, unknown>>;
   description?: string;
 }
 
@@ -47,6 +47,9 @@ function isOption<T extends Function>(o: T | UnionTypeOptions): o is UnionTypeOp
 }
 
 function isObjectType<T extends Function>(decoratedClass: T | UnionTypeOptions): decoratedClass is T {
-  const spec = MetadataInspector.getClassMetadata<ObjectTypeDecoratorMetadata>(ObjectTypeClass, decoratedClass as any);
+  const spec = MetadataInspector.getClassMetadata<ObjectTypeDecoratorMetadata>(
+    ObjectTypeClass,
+    decoratedClass as Function,
+  );
   return !!spec;
 }

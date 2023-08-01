@@ -8,7 +8,6 @@ describe('@graphql.query()', () => {
   it('gets the class thunk from @graphql.resolver() if unset', () => {
     function testFn() {
       class TestType {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         @field('someStringField', {type: () => GraphQLString, description: 'descritpion of a string field'})
         someField!: string;
       }

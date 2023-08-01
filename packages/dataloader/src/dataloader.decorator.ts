@@ -15,7 +15,7 @@ import {DataLoaderClassDecoratorMetadata, DataLoaderProviderInterface} from './t
 type MaybeProperty = string | symbol;
 
 const LoaderSymbol = Symbol('dataloader');
-function BoundValueMethod<K, V, C = K>(
+function boundValueMethod<K, V, C = K>(
   this: DataLoaderProviderInterface<K, V, C> & {[LoaderSymbol]?: DataLoader<K, V, C>},
 ): ValueOrPromise<DataLoader<K, V, C>> {
   const metadata = MetadataInspector.getClassMetadata<DataLoaderClassDecoratorMetadata<K, V, C>>(
@@ -49,9 +49,9 @@ export function dataloader<K, V, C = K>(
   options?: BindingAddress<DataLoader<K, V, C>> | DataLoader.Options<K, V, C>,
 ): ClassDecorator | ParameterDecorator {
   return function dataloaderWrapper(
-    target: any,
+    target: Function,
     property?: MaybeProperty,
-    propertyDescriptor?: TypedPropertyDescriptor<any> | number,
+    propertyDescriptor?: TypedPropertyDescriptor<unknown> | number,
   ) {
     if (isDecoratingParameter(options, target, property, propertyDescriptor) && 'undefined' === typeof property) {
       // return MethodDecoratorFactory.createDecorator<DataLoaderMethodDecoratorMetadata<K, V, C>>(
@@ -65,7 +65,7 @@ export function dataloader<K, V, C = K>(
         throw new Error('Decorating a class with `@dataloader({options})` requires a `load()` method on the class.');
       }
       if (!Object.hasOwn(target.prototype, 'value')) {
-        target.prototype.value = BoundValueMethod; //.bind(target);
+        target.prototype.value = boundValueMethod; //.bind(target);
       }
 
       return injectable.provider(binding => {
@@ -77,20 +77,20 @@ export function dataloader<K, V, C = K>(
   };
 }
 
-function isDecoratingParameter(
-  obj: any,
-  target: any,
+function isDecoratingParameter<K, V, C = K>(
+  obj: undefined | BindingAddress<DataLoader<K, V, C>> | DataLoader.Options<K, V, C>,
+  target: unknown,
   property?: MaybeProperty,
-  propertyDescriptor?: TypedPropertyDescriptor<any> | number,
-): obj is BindingAddress<any> {
-  return target && !property && Number.isInteger(propertyDescriptor);
+  propertyDescriptor?: TypedPropertyDescriptor<unknown> | number,
+): obj is BindingAddress<DataLoader<K, V, C>> {
+  return !!target && !property && Number.isInteger(propertyDescriptor);
 }
 
-function isDecoratingClass<K, V, C>(
-  obj: any,
-  target: any,
+function isDecoratingClass<K, V, C = K>(
+  obj: undefined | BindingAddress<DataLoader<K, V, C>> | DataLoader.Options<K, V, C>,
+  target: unknown,
   property?: MaybeProperty,
-  propertyDescriptor?: TypedPropertyDescriptor<any> | number,
+  propertyDescriptor?: TypedPropertyDescriptor<unknown> | number,
 ): obj is DataLoader.Options<K, V, C> {
-  return target && !property && !propertyDescriptor;
+  return !!target && !property && !propertyDescriptor;
 }

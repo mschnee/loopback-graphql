@@ -52,7 +52,7 @@ describe('GraphQLSchemaBuilder', () => {
 
     it('builds a type with all scalars', () => {
       const b = new BaseGraphQLSchemaBuilder([MyScalersType, ColorEnum]);
-      let schema: GraphQLSchema | undefined = b.build();
+      const schema: GraphQLSchema | undefined = b.build();
       // expect(() => (schema = b.build())).to.not.throw();
       expect(schema).to.exist;
       const printedSdl = printSchema(schema!);

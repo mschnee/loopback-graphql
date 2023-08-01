@@ -27,9 +27,10 @@ import {Reflector} from '@loopback/metadata';
 import {type GraphQLEnumTypeConfig, type GraphQLEnumValueConfig, type GraphQLEnumValueConfigMap} from 'graphql';
 import {DecoratorKeys} from '../keys.js';
 
-type EnumConfig<K extends string, V = any> = Omit<GraphQLEnumValueConfig, 'value'> & {name: K; value?: V};
-type EnumItem<K extends string, V = any> = EnumConfig<K, V> | K;
-type EnumResult<T extends EnumItem<string, any>[]> = {
+type EnumConfig<K extends string, V = unknown> = Omit<GraphQLEnumValueConfig, 'value'> & {name: K; value?: V};
+type EnumItem<K extends string, V = unknown> = EnumConfig<K, V> | K;
+type EnumResult<T extends EnumItem<string, unknown>[]> = {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any
   [K in T[number] as K extends EnumConfig<infer Name, infer Value> ? Name : K]: K extends EnumConfig<any, infer Value>
     ? Value
     : K;
@@ -37,10 +38,12 @@ type EnumResult<T extends EnumItem<string, any>[]> = {
 
 type NameOrTypeConfig = string | GraphQLEnumTypeConfig;
 
-export function Enum<K extends string, T extends EnumItem<K, any>[]>(
+// eslint-disable-next-line @typescript-eslint/naming-convention
+export function Enum<K extends string, T extends EnumItem<K, unknown>[]>(
   nameOrConfig: NameOrTypeConfig,
   ...inputArray: T
 ): EnumResult<T> {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const result: any = {};
 
   const values: GraphQLEnumValueConfigMap = {};
@@ -65,7 +68,7 @@ export function Enum<K extends string, T extends EnumItem<K, any>[]>(
   };
   Reflector.defineMetadata(DecoratorKeys.EnumObjectClass, spec, result);
   Object.freeze(result);
-  return result;
+  return result satisfies EnumResult<T>;
 }
 
 function getNameAndConfig(nameOrConfig: NameOrTypeConfig): [string, GraphQLEnumTypeConfig | undefined] {

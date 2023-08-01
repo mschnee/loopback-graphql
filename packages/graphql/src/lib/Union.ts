@@ -22,6 +22,7 @@ import {UnionTypeOptions, UnionTypeOptionsWithName, unionType} from '../decorato
  * @param types
  * @returns
  */
+/* eslint-disable @typescript-eslint/naming-convention, @typescript-eslint/unified-signatures */
 export function Union<T extends Function[]>(opts: UnionTypeOptionsWithName, ...types: T): T[number];
 export function Union<T extends Function[]>(name: string, ...types: T): T[number];
 export function Union<T extends Function[]>(nameOrOpts: string | UnionTypeOptionsWithName, ...types: T): T[number] {
@@ -47,7 +48,8 @@ export function Union<T extends Function[]>(nameOrOpts: string | UnionTypeOption
 
   return _unionOf;
 }
+/* eslint-enable @typescript-eslint/naming-convention, @typescript-eslint/unified-signatures */
 
-function isOpts(o?: any): o is UnionTypeOptions {
+function isOpts(o?: unknown): o is UnionTypeOptions {
   return typeof o === 'object';
 }

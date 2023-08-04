@@ -424,7 +424,12 @@ export class BaseGraphQLSchemaBuilder extends GraphQLSchemaBuilderInterface {
   buildTypeFieldForSpec(spec: TypeFieldDecoratorMetadata): GraphQLFieldConfig<unknown, unknown, unknown> {
     const maybeName = typeof spec.typeThunk === 'function' ? spec.typeThunk() : spec.typeThunk;
     let type: Maybe<GraphQLOutputType> = undefined;
-    if (typeof maybeName === 'string') {
+    if (typeof maybeName === 'function' && 'name' in maybeName) {
+      const gt = this.getTypeForName(maybeName.name);
+      if (isOutputType(gt)) {
+        type = gt;
+      }
+    } else if (typeof maybeName === 'string') {
       const gt = this.getTypeForName(maybeName);
       if (isOutputType(gt)) {
         type = gt;

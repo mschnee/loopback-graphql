@@ -9,8 +9,8 @@ import {
   GraphQLSchema,
   GraphQLUnionType,
   getNamedType,
-  isInputObjectType,
   isOutputType,
+  isScalarType,
   type GraphQLFieldConfig,
   type GraphQLInputFieldConfig,
   type GraphQLInputType,
@@ -204,7 +204,7 @@ export class BaseGraphQLSchemaBuilder extends GraphQLSchemaBuilderInterface {
       /**
        * First: get the static field specs.
        */
-      const fieldSpecs = this.getAllFieldSpecsForTypeByName(classSpec.typeName);
+      const fieldSpecs = this.getAllFieldSpecsForInputTypeByName(classSpec.typeName);
 
       if (fieldSpecs) {
         for (const [, spec] of Object.entries(fieldSpecs)) {
@@ -220,26 +220,23 @@ export class BaseGraphQLSchemaBuilder extends GraphQLSchemaBuilderInterface {
   }
 
   buildInputTypeFieldForSpec(spec: TypeFieldDecoratorMetadata): GraphQLInputFieldConfig {
-    const maybeName = typeof spec.typeThunk === 'function' ? spec.typeThunk() : spec.typeThunk;
+    const maybeScalar = typeof spec.typeThunk === 'function' ? spec.typeThunk() : spec.typeThunk;
     let type: Maybe<GraphQLInputType> = undefined;
-    if (typeof maybeName === 'string') {
-      const gt = this.getInputForName(maybeName);
-      if (isInputObjectType(gt)) {
-        type = gt;
-      }
-    } else if (isInputObjectType(maybeName)) {
-      type = maybeName;
+    // input fields must be scalars
+
+    if (isScalarType(maybeScalar)) {
+      type = maybeScalar;
     }
 
     if (!type) {
-      const enumSpec = Reflector.getMetadata(DecoratorKeys.EnumObjectClass, maybeName);
+      const enumSpec = Reflector.getMetadata(DecoratorKeys.EnumObjectClass, maybeScalar);
       if (enumSpec) {
         type = this.getEnumForName(enumSpec.name);
       }
     }
 
     if (!type) {
-      throw new Error('What am I?');
+      throw new Error('Input Fields must be GraphQLScalars or Enumerations');
     }
 
     type = spec.required ? new GraphQLNonNull(type) : type;
@@ -316,20 +313,20 @@ export class BaseGraphQLSchemaBuilder extends GraphQLSchemaBuilderInterface {
     return this.interfaceTypeCache[name];
   }
 
-  getAllTypeNames(): string[] {
-    return Array.from(
-      Object.values(this.typeClasses).reduce((accum: Set<string>, t) => {
-        const classSpec = MetadataInspector.getClassMetadata<ObjectTypeDecoratorMetadata>(
-          DecoratorKeys.ObjectTypeClass,
-          t as Function,
-        );
-        if (classSpec) {
-          accum.add(classSpec.typeName);
-        }
-        return accum;
-      }, new Set<string>()),
-    );
-  }
+  // getAllTypeNames(): string[] {
+  //   return Array.from(
+  //     Object.values(this.typeClasses).reduce((accum: Set<string>, t) => {
+  //       const classSpec = MetadataInspector.getClassMetadata<ObjectTypeDecoratorMetadata>(
+  //         DecoratorKeys.ObjectTypeClass,
+  //         t as Function,
+  //       );
+  //       if (classSpec) {
+  //         accum.add(classSpec.typeName);
+  //       }
+  //       return accum;
+  //     }, new Set<string>()),
+  //   );
+  // }
 
   getAllInputNames(): string[] {
     return Array.from(
@@ -394,6 +391,39 @@ export class BaseGraphQLSchemaBuilder extends GraphQLSchemaBuilderInterface {
     return Object.values(this.typeClasses).reduce<FieldSpec[]>((accum, t) => {
       const classSpec = MetadataInspector.getClassMetadata<ObjectTypeDecoratorMetadata>(
         DecoratorKeys.ObjectTypeClass,
+        t as Function,
+        {
+          ownMetadataOnly: true,
+        },
+      );
+      if (!(t as Function).prototype) {
+        return accum;
+      }
+
+      const fieldSpecs = MetadataInspector.getAllPropertyMetadata<TypeFieldDecoratorMetadata>(
+        DecoratorKeys.TypeFieldProperty,
+        (t as Function).prototype,
+        {
+          ownMetadataOnly: true,
+        },
+      );
+      if (classSpec?.typeName === n && fieldSpecs) {
+        const allSpecs = Object.entries(fieldSpecs).map(([propertyName, spec]) => ({
+          spec,
+          propertyName,
+          decoratedClass: t,
+        }));
+        return accum.concat(allSpecs);
+      } else {
+        return accum;
+      }
+    }, [] as FieldSpec[]);
+  }
+
+  getAllFieldSpecsForInputTypeByName(n: string): FieldSpec[] {
+    return Object.values(this.typeClasses).reduce<FieldSpec[]>((accum, t) => {
+      const classSpec = MetadataInspector.getClassMetadata<InputTypeDecoratorMetadata>(
+        DecoratorKeys.InputTypeClass,
         t as Function,
         {
           ownMetadataOnly: true,

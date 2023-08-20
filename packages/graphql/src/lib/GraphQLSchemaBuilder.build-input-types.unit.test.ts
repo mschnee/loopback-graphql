@@ -1,15 +1,15 @@
 import {expect} from 'chai';
 import {GraphQLID, GraphQLSchema, GraphQLString, printSchema} from 'graphql';
-import {field, inputType, objectType} from '../decorators';
-import {Enum, EnumValue} from './Enum';
-import {BaseGraphQLSchemaBuilder} from './GraphQLSchemaBuilder';
+import {field, inputType, objectType} from '../decorators/index.js';
+import {Enum, EnumValue} from './Enum.js';
+import {BaseGraphQLSchemaBuilder} from './GraphQLSchemaBuilder.js';
 
 describe('GraphQLSchemaBuilder.build() @inputType', () => {
   it('throws on an inputType with a complex output type', () => {
     @inputType()
     class InputType {
       @field({type: () => OutputType})
-      outType: OutputType;
+      outType?: OutputType;
 
       @field({type: () => GraphQLID})
       id!: string;

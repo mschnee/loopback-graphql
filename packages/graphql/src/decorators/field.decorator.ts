@@ -3,15 +3,14 @@ import {getOptionsAndThunk} from '../lib/get-options-and-thunk.js';
 import type {Maybe, NameOrClassOrTypeThunk, OptionsOrThunk} from '../types.js';
 import {FieldResolverClass, FieldResolverMethod, TypeFieldProperty} from './keys.js';
 
+
 /**
- * Class Decorator, for a field resolver class providing a `resolve()` method
+ * Property decorator for classes decorated with `@inputType`, `@objectType`, or `@interfaceType`
  * @param nameOrTypeThunk
  * @param optionsOrThunk
  */
-export function field(
-  nameOrTypeThunk: NameOrClassOrTypeThunk,
-  optionsOrThunk?: OptionsOrThunk<FieldResolverClassDecoratorOptions>,
-): ClassDecorator;
+export function field(name: string, optionsOrThunk?: OptionsOrThunk<TypeFieldDecoratorOptions>): PropertyDecorator;
+export function field(optionsOrThunk: OptionsOrThunk<TypeFieldDecoratorOptions>): PropertyDecorator;
 
 /**
  * Method Decorator for a class decorated with `@resolver((of)=> Type)`
@@ -24,12 +23,15 @@ export function field(
 ): MethodDecorator;
 
 /**
- * Property decorator for classes decorated with `@inputType`, `@objectType`, or `@interfaceType`
+ * Class Decorator, for a field resolver class providing a `resolve()` method
  * @param nameOrTypeThunk
  * @param optionsOrThunk
  */
-export function field(name: string, optionsOrThunk?: OptionsOrThunk<TypeFieldDecoratorOptions>): PropertyDecorator;
-export function field(optionsOrThunk: OptionsOrThunk<TypeFieldDecoratorOptions>): PropertyDecorator;
+export function field(
+  nameOrTypeThunk: NameOrClassOrTypeThunk,
+  optionsOrThunk?: OptionsOrThunk<FieldResolverClassDecoratorOptions>,
+): ClassDecorator;
+
 
 /**
  * This convenience decorator has two uses:
@@ -42,10 +44,8 @@ export function field(optionsOrThunk: OptionsOrThunk<TypeFieldDecoratorOptions>)
  * @returns
  */
 export function field(
-  nameOrTypeThunk: TypeFieldDecoratorOptions | NameOrClassOrTypeThunk,
-  optionsOrThunk?:
-    | TypeFieldDecoratorOptions
-    | OptionsOrThunk<FieldResolverMethodDecoratorOptions | FieldResolverClassDecoratorOptions>,
+  nameOrTypeThunk: unknown,
+  optionsOrThunk?: unknown,
 ): ClassDecorator | MethodDecorator | PropertyDecorator {
   return function graphQlFieldWrapper(
     target: Function | Object,

@@ -316,21 +316,6 @@ export class BaseGraphQLSchemaBuilder extends GraphQLSchemaBuilderInterface {
     return this.interfaceTypeCache[name];
   }
 
-  // getAllTypeNames(): string[] {
-  //   return Array.from(
-  //     Object.values(this.typeClasses).reduce((accum: Set<string>, t) => {
-  //       const classSpec = MetadataInspector.getClassMetadata<ObjectTypeDecoratorMetadata>(
-  //         DecoratorKeys.ObjectTypeClass,
-  //         t as Function,
-  //       );
-  //       if (classSpec) {
-  //         accum.add(classSpec.typeName);
-  //       }
-  //       return accum;
-  //     }, new Set<string>()),
-  //   );
-  // }
-
   getAllInputNames(): string[] {
     return Array.from(
       Object.values(this.resolverClasses).reduce((accum: Set<string>, t) => {

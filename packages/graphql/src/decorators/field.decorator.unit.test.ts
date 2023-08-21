@@ -22,4 +22,21 @@ describe('@graphql.query()', () => {
     );
     expect(spec).to.exist;
   });
+
+  it('accepts a type thunk as the only field param', () => {
+    function testFn() {
+      class TestType {
+        @field(() => GraphQLString)
+        someField?: string;
+      }
+      return TestType;
+    }
+    const cls = testFn();
+    const spec = MetadataInspector.getPropertyMetadata<TypeFieldDecoratorOptions>(
+      DecoratorKeys.TypeFieldProperty,
+      cls.prototype,
+      'someField',
+    );
+    expect(spec).to.exist;
+  })
 });

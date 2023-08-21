@@ -48,8 +48,8 @@
   "devDependencies": {
     "@commitlint/cli": "^17.6.7",
     "@commitlint/config-conventional": "^17.6.7",
-    "@loopback/build": "10.1.1",
-    "@loopback/testlab": "6.1.1",
+    "@loopback/build": "10.1.2",
+    "@loopback/testlab": "6.1.2",
     "@tsconfig/esm": "1.0.4",
     "@tsconfig/node20": "20.1.1",
     "@types/chai": "^4.3.5",
@@ -63,10 +63,10 @@
     "typescript": "5.1.6"
   },
   "dependencies": {
-    "@loopback/boot": "6.1.1",
-    "@loopback/context": "6.1.1",
-    "@loopback/core": "5.1.1",
-    "@loopback/metadata": "6.1.1",
+    "@loopback/boot": "6.1.2",
+    "@loopback/context": "6.1.2",
+    "@loopback/core": "5.1.2",
+    "@loopback/metadata": "6.1.2",
     "graphql": "16.8.0"
   }
 }

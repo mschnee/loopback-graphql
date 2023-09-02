@@ -6,8 +6,8 @@ import {LoopbackGraphQLVisitor} from './visitor.js';
 
 export * from './visitor.js';
 
-const TYPE_GRAPHQL_IMPORT = `import * as TypeGraphQL from 'type-graphql';\nexport { TypeGraphQL };`;
-const isDefinitionInterface = (definition: string) => definition.includes('@TypeGraphQL.InterfaceType()');
+const LB_GRAPHQL_IMPORT = `import * as graphql from '@mschnee/loopback-graphql';`;
+const isDefinitionInterface = (definition: string) => definition.includes('@graphql.interfaceType()');
 
 export const plugin: PluginFunction<LoopbackGraphQLPluginConfig, Types.ComplexPluginOutput> = (
   schema: GraphQLSchema,
@@ -27,7 +27,7 @@ export const plugin: PluginFunction<LoopbackGraphQLPluginConfig, Types.ComplexPl
   );
 
   return {
-    prepend: [...visitor.getEnumsImports(), ...visitor.getWrapperDefinitions(), TYPE_GRAPHQL_IMPORT],
+    prepend: [...visitor.getEnumsImports(), ...visitor.getWrapperDefinitions(), LB_GRAPHQL_IMPORT],
     content: [scalars, ...definitions, ...introspectionDefinitions].join('\n'),
   };
 };

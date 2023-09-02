@@ -3,3 +3,4 @@ dist
 .eslintrc.cjs
 docs
 commitlint.config.cjs
+type-graphql

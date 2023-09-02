@@ -3,7 +3,11 @@ import {
   TypeScriptOperationVariablesToObject,
   TypeScriptPluginParsedConfig,
 } from '@graphql-codegen/typescript';
-import {AvoidOptionalsConfig, DeclarationBlock, indent} from '@graphql-codegen/visitor-plugin-common';
+import {
+  AvoidOptionalsConfig,
+  DeclarationBlock,
+  indent,
+} from '@graphql-codegen/visitor-plugin-common';
 import autoBind from 'auto-bind';
 import {
   EnumTypeDefinitionNode,
@@ -63,7 +67,7 @@ function escapeString(str: string) {
   );
 }
 
-type DecoratorOptions = {[key: string]: string};
+type DecoratorOptions = { [key: string]: string };
 function formatDecoratorOptions(options: DecoratorOptions, isFirstArgument = true) {
   if (!Object.keys(options).length) {
     return '';
@@ -100,7 +104,11 @@ export class TypeGraphQLVisitor<
 > extends TsVisitor<TRawConfig, TParsedConfig> {
   typescriptVisitor: TsVisitor<TRawConfig, TParsedConfig>;
 
-  constructor(schema: GraphQLSchema, pluginConfig: TRawConfig, additionalConfig: Partial<TParsedConfig> = {}) {
+  constructor(
+    schema: GraphQLSchema,
+    pluginConfig: TRawConfig,
+    additionalConfig: Partial<TParsedConfig> = {},
+  ) {
     super(schema, pluginConfig, {
       avoidOptionals: pluginConfig.avoidOptionals || false,
       maybeValue: pluginConfig.maybeValue || 'T | null',
@@ -183,8 +191,11 @@ export class TypeGraphQLVisitor<
     return 'Maybe';
   }
 
-  protected buildArgumentsBlock(node: InterfaceTypeDefinitionNode | ObjectTypeDefinitionNode): string {
-    const fieldsWithArguments = node.fields.filter(field => field.arguments && field.arguments.length > 0) || [];
+  protected buildArgumentsBlock(
+    node: InterfaceTypeDefinitionNode | ObjectTypeDefinitionNode,
+  ): string {
+    const fieldsWithArguments =
+      node.fields.filter(field => field.arguments && field.arguments.length > 0) || [];
     return fieldsWithArguments
       .map(field => {
         const name =
@@ -233,7 +244,9 @@ export class TypeGraphQLVisitor<
       );
     }
 
-    return [declarationBlock.string, this.buildArgumentsBlock(originalNode)].filter(f => f).join('\n\n');
+    return [declarationBlock.string, this.buildArgumentsBlock(originalNode)]
+      .filter(f => f)
+      .join('\n\n');
   }
 
   InputObjectTypeDefinition(node: InputObjectTypeDefinitionNode): string {
@@ -283,7 +296,11 @@ export class TypeGraphQLVisitor<
     return declarationBlock.string;
   }
 
-  InterfaceTypeDefinition(node: InterfaceTypeDefinitionNode, key: number | string, parent: any): string {
+  InterfaceTypeDefinition(
+    node: InterfaceTypeDefinitionNode,
+    key: number | string,
+    parent: any,
+  ): string {
     if (!this.hasTypeDecorators(node.name as unknown as string)) {
       return this.typescriptVisitor.InterfaceTypeDefinition(node, key, parent);
     }
@@ -293,11 +310,16 @@ export class TypeGraphQLVisitor<
 
     const decoratorOptions = this.getDecoratorOptions(node);
 
-    const declarationBlock = this.getInterfaceTypeDeclarationBlock(node, originalNode).withDecorator(
+    const declarationBlock = this.getInterfaceTypeDeclarationBlock(
+      node,
+      originalNode,
+    ).withDecorator(
       `@TypeGraphQL.${interfaceDecorator}(${formatDecoratorOptions(decoratorOptions)})`,
     );
 
-    return [declarationBlock.string, this.buildArgumentsBlock(originalNode)].filter(f => f).join('\n\n');
+    return [declarationBlock.string, this.buildArgumentsBlock(originalNode)]
+      .filter(f => f)
+      .join('\n\n');
   }
 
   buildTypeString(type: Type): string {
@@ -365,11 +387,19 @@ export class TypeGraphQLVisitor<
       throw new Error(`Unknown scalar type ${type}`);
     });
 
-    return {type, isNullable, isArray, isScalar, isItemsNullable: isArray && isSingularTypeNullable};
+    return {
+      type,
+      isNullable,
+      isArray,
+      isScalar,
+      isItemsNullable: isArray && isSingularTypeNullable,
+    };
   }
 
   fixDecorator(type: Type, typeString: string) {
-    return type.isArray || type.isNullable || type.isScalar ? typeString : `FixDecorator<${typeString}>`;
+    return type.isArray || type.isNullable || type.isScalar
+      ? typeString
+      : `FixDecorator<${typeString}>`;
   }
 
   FieldDefinition(
@@ -399,10 +429,9 @@ export class TypeGraphQLVisitor<
     const decorator =
       '\n' +
       indent(
-        `@TypeGraphQL.${fieldDecorator}(type => ${type.isArray ? `[${type.type}]` : type.type}${formatDecoratorOptions(
-          decoratorOptions,
-          false,
-        )})`,
+        `@TypeGraphQL.${fieldDecorator}(type => ${
+          type.isArray ? `[${type.type}]` : type.type
+        }${formatDecoratorOptions(decoratorOptions, false)})`,
       ) +
       '\n';
 
@@ -411,7 +440,9 @@ export class TypeGraphQLVisitor<
     return (
       decorator +
       indent(
-        `${this.config.immutableTypes ? 'readonly ' : ''}${node.name}${type.isNullable ? '?' : '!'}: ${typeString};`,
+        `${this.config.immutableTypes ? 'readonly ' : ''}${node.name}${
+          type.isNullable ? '?' : '!'
+        }: ${typeString};`,
       )
     );
   }
@@ -433,7 +464,9 @@ export class TypeGraphQLVisitor<
 
     const type = this.parseType(rawType);
     const typeGraphQLType =
-      type.isScalar && TYPE_GRAPHQL_SCALARS.includes(type.type) ? `TypeGraphQL.${type.type}` : type.type;
+      type.isScalar && TYPE_GRAPHQL_SCALARS.includes(type.type)
+        ? `TypeGraphQL.${type.type}`
+        : type.type;
 
     const decoratorOptions = this.getDecoratorOptions(node);
 
@@ -459,7 +492,9 @@ export class TypeGraphQLVisitor<
     return (
       decorator +
       indent(
-        `${this.config.immutableTypes ? 'readonly ' : ''}${nameString}${type.isNullable ? '?' : '!'}: ${typeString};`,
+        `${this.config.immutableTypes ? 'readonly ' : ''}${nameString}${
+          type.isNullable ? '?' : '!'
+        }: ${typeString};`,
       )
     );
   }
@@ -471,7 +506,9 @@ export class TypeGraphQLVisitor<
 
     return (
       super.EnumTypeDefinition(node) +
-      `TypeGraphQL.registerEnumType(${this.convertName(node)}, { name: '${this.convertName(node)}' });\n`
+      `TypeGraphQL.registerEnumType(${this.convertName(node)}, { name: '${this.convertName(
+        node,
+      )}' });\n`
     );
   }
 

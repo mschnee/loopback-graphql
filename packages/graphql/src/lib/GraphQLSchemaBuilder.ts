@@ -44,7 +44,7 @@ export abstract class GraphQLSchemaBuilderInterface {
    */
   constructor(
     readonly typeClasses: Array<Function | Object> = [],
-    readonly resolverClasses: Function[] = [],
+
   ) {}
   abstract build(): GraphQLSchema;
   abstract buildNamedObjectTypes(): NamedObjectTypeMap;
@@ -318,10 +318,10 @@ export class BaseGraphQLSchemaBuilder extends GraphQLSchemaBuilderInterface {
 
   getAllInputNames(): string[] {
     return Array.from(
-      Object.values(this.resolverClasses).reduce((accum: Set<string>, t) => {
+      Object.values(this.typeClasses).reduce((accum: Set<string>, t) => {
         const classSpec = MetadataInspector.getClassMetadata<InputTypeDecoratorMetadata>(
           DecoratorKeys.InputTypeClass,
-          t,
+          t as Function,
         );
         if (classSpec) {
           accum.add(classSpec.typeName);
@@ -581,17 +581,25 @@ export class BaseGraphQLSchemaBuilder extends GraphQLSchemaBuilderInterface {
     };
   }
 
-  build() {
+  build(config ?: GraphQLSchemaConfig) {
+    const {types} = config ?? {types: []};
+
     const accum: GraphQLNamedType[] = [];
-    const types = accum.concat(
+
+    const builtTypes = accum.concat(
       Object.values(this.buildEnumTypes()).map(v => getNamedType(v)),
       Object.values(this.buildNamedInterfaceTypes()).map(v => getNamedType(v)),
       Object.values(this.buildNamedObjectTypes()).map(v => getNamedType(v)),
       Object.values(this.buildNamedInputTypes()).map(v => getNamedType(v)),
       Object.values(this.buildUnionTypes()).map(v => getNamedType(v)),
-    );
+    ).filter(f => {
+      return !types?.find(t => t.name === f.name)
+    });
+
+
     return new GraphQLSchema({
-      types,
+      types: accum.concat(builtTypes),
+      ...config
     });
   }
 }

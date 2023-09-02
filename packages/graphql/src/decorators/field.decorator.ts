@@ -3,7 +3,6 @@ import {getOptionsAndThunk} from '../lib/get-options-and-thunk.js';
 import type {Maybe, NameOrClassOrTypeThunk, OptionsOrThunk} from '../types.js';
 import {FieldResolverClass, FieldResolverMethod, TypeFieldProperty} from './keys.js';
 
-
 /**
  * Property decorator for classes decorated with `@inputType`, `@objectType`, or `@interfaceType`
  * @param nameOrTypeThunk
@@ -31,7 +30,6 @@ export function field(
   nameOrTypeThunk: NameOrClassOrTypeThunk,
   optionsOrThunk?: OptionsOrThunk<FieldResolverClassDecoratorOptions>,
 ): ClassDecorator;
-
 
 /**
  * This convenience decorator has two uses:

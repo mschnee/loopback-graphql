@@ -38,5 +38,5 @@ describe('@graphql.query()', () => {
       'someField',
     );
     expect(spec).to.exist;
-  })
+  });
 });

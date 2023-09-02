@@ -1,0 +1,30 @@
+{
+  "version": "0.0.1",
+  "name": "@mschnee/loopback-graphql-codegen",
+  "type": "module",
+  "typings": "dist/index.d.ts",
+  "exports": {
+    ".": "./dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc --build",
+    "test": "npm run test:unit",
+    "test:cov": "npm run test:unit:cov",
+    "test:unit": "mocha --loader=tsx \"src/**/*.unit.test.ts\"",
+    "test:unit:cov": "c8 npm run test"
+  },
+  "devDependencies": {
+    "@graphql-codegen/testing": "^3.0.0",
+    "@graphql-codegen/typescript-type-graphql": "^2.3.6",
+    "@types/expect": "^24.3.0",
+    "@types/mocha": "^10.0.1",
+    "common-tags": "^1.8.2",
+    "expect": "29.6.4",
+    "mocha": "^10.2.0"
+  },
+  "peerDependencies": {
+    "@graphql-codegen/plugin-helpers": "^4.0.0",
+    "@graphql-codegen/typescript": "^4.0.0",
+    "graphql": "^16.6.0"
+  }
+}

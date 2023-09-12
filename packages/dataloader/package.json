@@ -14,7 +14,7 @@
   "devDependencies": {
     "@types/expect": "^24.3.0",
     "@types/mocha": "^10.0.1",
-    "expect": "29.6.4",
+    "expect": "29.7.0",
     "mocha": "^10.2.0"
   },
   "peerDependencies": {

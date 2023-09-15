@@ -1,5 +1,5 @@
 import {TypeScriptPluginConfig} from '@graphql-codegen/typescript';
-import {DecoratorConfig} from './visitor.js';
+import {DecoratorConfig} from './types.js';
 
 export interface LoopbackGraphQLPluginConfig extends TypeScriptPluginConfig {
   /**

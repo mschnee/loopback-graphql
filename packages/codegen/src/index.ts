@@ -20,7 +20,7 @@ export const plugin: PluginFunction<LoopbackGraphQLPluginConfig, Types.ComplexPl
   const introspectionDefinitions = includeIntrospectionTypesDefinitions(schema, documents, config);
   const scalars = visitor.scalarsDefinition;
 
-  const {definitions} = visitorResult;
+  const definitions = visitorResult.definitions as string[];
   // Sort output by interfaces first, classes last to prevent TypeScript errors
   definitions.sort(
     (definition1, definition2) => +isDefinitionInterface(definition2) - +isDefinitionInterface(definition1),

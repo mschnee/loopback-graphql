@@ -11,15 +11,9 @@ import {
   ObjectTypeDefinitionNode,
 } from 'graphql';
 import {LoopbackGraphQLPluginConfig} from './config.js';
+import {GRAPHQL_TYPES} from './consts.js';
 import {formatDecoratorOptions} from './lib/format-decorator-options.js';
 import {DecoratorOptions, LoopbackGraphQLPluginParsedConfig} from './types.js';
-
-const MAYBE_REGEX = /^Maybe<(.*?)>$/;
-const ARRAY_REGEX = /^Array<(.*?)>$/;
-const SCALAR_REGEX = /^Scalars\['(.*?)'\]$/;
-const GRAPHQL_TYPES = ['Query', 'Mutation', 'Subscription'];
-const SCALARS = ['ID', 'String', 'Boolean', 'Int', 'Float'];
-const TYPE_GRAPHQL_SCALARS = ['ID', 'Int', 'Float'];
 
 export class LoopbackGraphQLVisitor<
   TRawConfig extends LoopbackGraphQLPluginConfig = LoopbackGraphQLPluginConfig,
@@ -29,11 +23,11 @@ export class LoopbackGraphQLVisitor<
 
   constructor(schema: GraphQLSchema, pluginConfig: TRawConfig, additionalConfig: Partial<TParsedConfig> = {}) {
     super(schema, pluginConfig, {
-      avoidOptionals: pluginConfig.avoidOptionals || false,
-      maybeValue: pluginConfig.maybeValue || 'T | null',
-      constEnums: pluginConfig.constEnums || false,
-      enumsAsTypes: pluginConfig.enumsAsTypes || false,
-      immutableTypes: pluginConfig.immutableTypes || false,
+      avoidOptionals: pluginConfig.avoidOptionals ?? false,
+      maybeValue: pluginConfig.maybeValue ?? 'T | null',
+      constEnums: pluginConfig.constEnums ?? false,
+      enumsAsTypes: pluginConfig.enumsAsTypes ?? false,
+      immutableTypes: pluginConfig.immutableTypes ?? false,
       declarationKind: {
         type: 'class',
         interface: 'abstract class',

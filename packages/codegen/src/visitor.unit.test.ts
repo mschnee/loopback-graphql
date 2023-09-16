@@ -2,7 +2,6 @@
  * Retrieved from https://github.com/dotansimha/graphql-code-generator/blob/a46b8d99c797283d773ec14163c62be9c84d4c2b/packages/plugins/typescript/type-graphql/tests/type-graphql.spec.ts
  */
 import {Types} from '@graphql-codegen/plugin-helpers';
-import '@graphql-codegen/testing';
 import {expect} from 'chai';
 import {oneLine} from 'common-tags';
 import {buildSchema} from 'graphql';

@@ -5,8 +5,12 @@
       "path": "."
     },
     {
-      "name": "📘 Docs",
+      "name": "docs",
       "path": "docs"
+    },
+    {
+      "name": "📦 @mschnee/loopback-graphql-codegen",
+      "path": "packages/codegen"
     },
     {
       "name": "📦 @mschnee/loopback-dataloader",

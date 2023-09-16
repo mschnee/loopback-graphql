@@ -2,6 +2,7 @@ import {TsVisitor, TypeScriptOperationVariablesToObject} from '@graphql-codegen/
 
 import autoBind from 'auto-bind';
 import {
+  EnumTypeDefinitionNode,
   FieldDefinitionNode,
   GraphQLEnumType,
   GraphQLSchema,
@@ -11,7 +12,7 @@ import {
   ObjectTypeDefinitionNode,
 } from 'graphql';
 import {LoopbackGraphQLPluginConfig} from './config.js';
-import {GRAPHQL_TYPES} from './consts.js';
+import {FIX_DECORATOR_SIGNATURE, GRAPHQL_TYPES} from './consts.js';
 import {formatDecoratorOptions} from './lib/format-decorator-options.js';
 import {DecoratorOptions, LoopbackGraphQLPluginParsedConfig} from './types.js';
 
@@ -115,6 +116,33 @@ export class LoopbackGraphQLVisitor<
     return decoratorOptions;
   }
 
+  // eslint-disable-next-line @typescript-eslint/naming-convention
+  EnumTypeDefinition(node: EnumTypeDefinitionNode): string {
+    if (!this.hasTypeDecorators(node.name as unknown as string)) {
+      return this.typescriptVisitor.EnumTypeDefinition(node);
+    }
+
+    const convertedName = this.convertName(node);
+    const values = node.values?.reduce<string[]>((accum, val) => {
+      const hasDescription = !!val.description;
+      if (hasDescription) {
+        accum.push(`{name: '${val.name}', value: '${val.name}', description: '${val.description}'}`);
+      } else {
+        accum.push(`'${val.name}'`);
+      }
+      return accum;
+    }, []);
+
+    const hasDescription = !!node.description;
+    if (hasDescription) {
+      return `export const ${convertedName} = graphql.Enum({name: '${convertedName}', description: '${
+        node.description
+      }'}, ${values?.join(', ')});\n`;
+    } else {
+      return `export const ${convertedName} = graphql.Enum('${convertedName}', ${values?.join(', ')});\n`;
+    }
+  }
+
   protected hasTypeDecorators(typeName: string): boolean {
     if (GRAPHQL_TYPES.includes(typeName)) {
       return false;
@@ -125,6 +153,14 @@ export class LoopbackGraphQLVisitor<
     }
 
     return this.config.decorateTypes.some(filter => filter === typeName);
+  }
+
+  public getWrapperDefinitions(): string[] {
+    return [...super.getWrapperDefinitions(), this.getFixDecoratorDefinition()];
+  }
+
+  public getFixDecoratorDefinition(): string {
+    return `${this.getExportPrefix()}${FIX_DECORATOR_SIGNATURE}`;
   }
 }
 function escapeString(arg0: string): string {

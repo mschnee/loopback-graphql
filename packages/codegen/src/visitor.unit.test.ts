@@ -61,19 +61,19 @@ describe('@loopback/graphql-codegen', () => {
         A
         "this is b"
         B
+        C
       }
     `);
     const result = await plugin(schema, [], {}, {outputFile: ''});
 
-    expect(strippedString(result.content)).to.contain(`
-      /** custom enum */
-      export enum MyEnum {
-        /** this is a */
-        A = 'A',
-        /** this is b */
-        B = 'B'
-      }
-      TypeGraphQL.registerEnumType(MyEnum, { name: 'MyEnum' });`);
+    const expectedParts = [
+      `export const MyEnum = graphql.Enum({name: 'MyEnum', description: 'custom enum'}, `,
+      `{name: 'A', value: 'A', description: 'this is a'}, `,
+      `{name: 'B', value: 'B', description: 'this is b'}, `,
+      `'C'`,
+      `)`,
+    ];
+    expect(strippedString(result.content)).to.contain(expectedParts.join(''));
   });
 
   it('should generate type-graphql classes for object types', async () => {

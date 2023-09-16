@@ -23,7 +23,7 @@ describe('@loopback/graphql-codegen', () => {
       scalar A
     `);
     const result = await plugin(schema, [], {}, {outputFile: ''});
-    expect(strippedString(result.prepend)).to.eq('export type Maybe<T> =');
+    expect(strippedString(result.prepend)).to.contain('export type Maybe<T> =');
   });
 
   it('should expose Exact', async () => {
@@ -31,7 +31,7 @@ describe('@loopback/graphql-codegen', () => {
       scalar A
     `);
     const result = await plugin(schema, [], {}, {outputFile: ''});
-    expect(strippedString(result.prepend)).to.eq('export type Exact<');
+    expect(strippedString(result.prepend)).to.contain('export type Exact<');
   });
 
   it('should expose FixDecorator', async () => {
@@ -39,7 +39,7 @@ describe('@loopback/graphql-codegen', () => {
       scalar A
     `);
     const result = await plugin(schema, [], {}, {outputFile: ''});
-    expect(strippedString(result.prepend)).to.eq('export type FixDecorator<T> = T;');
+    expect(strippedString(result.prepend)).to.contain('export type FixDecorator<T> = T;');
   });
 
   it('should generate type-graphql import/export', async () => {
@@ -48,8 +48,9 @@ describe('@loopback/graphql-codegen', () => {
     `);
     const result = await plugin(schema, [], {}, {outputFile: ''});
 
-    expect(strippedString(result.prepend)).to.eq(`import * as TypeGraphQL from 'type-graphql';
-    export { TypeGraphQL };`);
+    expect(strippedString(result.prepend)).to.contain(
+      `import * as graphql from '@mschnee/loopback-graphql';export { graphql };`,
+    );
   });
 
   it('should generate type-graphql enums', async () => {
@@ -64,7 +65,7 @@ describe('@loopback/graphql-codegen', () => {
     `);
     const result = await plugin(schema, [], {}, {outputFile: ''});
 
-    expect(strippedString(result.content)).to.eq(`
+    expect(strippedString(result.content)).to.contain(`
       /** custom enum */
       export enum MyEnum {
         /** this is a */
@@ -100,37 +101,37 @@ describe('@loopback/graphql-codegen', () => {
 
     const result = await plugin(schema, [], {}, {outputFile: ''});
 
-    expect(strippedString(result.content)).to.eq(`
-      @TypeGraphQL.ObjectType()
+    expect(strippedString(result.content)).to.contain(`
+      @graphql.objectType()
       export class A {
         __typename?: 'A';
-        @TypeGraphQL.Field(type => TypeGraphQL.ID, { nullable: true })
+        @graphql.field(type => TypeGraphQL.ID, { nullable: true })
         id?: Maybe<Scalars['ID']>;
-        @TypeGraphQL.Field(type => TypeGraphQL.ID)
+        @graphql.field(type => TypeGraphQL.ID)
         mandatoryId!: Scalars['ID'];
-        @TypeGraphQL.Field(type => String, { nullable: true })
+        @graphql.field(type => String, { nullable: true })
         str?: Maybe<Scalars['String']>;
-        @TypeGraphQL.Field(type => String)
+        @graphql.field(type => String)
         mandatoryStr!: Scalars['String'];
-        @TypeGraphQL.Field(type => Boolean, { nullable: true })
+        @graphql.field(type => Boolean, { nullable: true })
         bool?: Maybe<Scalars['Boolean']>;
-        @TypeGraphQL.Field(type => Boolean)
+        @graphql.field(type => Boolean)
         mandatoryBool!: Scalars['Boolean'];
-        @TypeGraphQL.Field(type => TypeGraphQL.Int, { nullable: true })
+        @graphql.field(type => TypeGraphQL.Int, { nullable: true })
         int?: Maybe<Scalars['Int']>;
-        @TypeGraphQL.Field(type => TypeGraphQL.Int)
+        @graphql.field(type => TypeGraphQL.Int)
         mandatoryInt!: Scalars['Int'];
-        @TypeGraphQL.Field(type => TypeGraphQL.Float, { nullable: true })
+        @graphql.field(type => TypeGraphQL.Float, { nullable: true })
         float?: Maybe<Scalars['Float']>;
-        @TypeGraphQL.Field(type => TypeGraphQL.Float)
+        @graphql.field(type => TypeGraphQL.Float)
         mandatoryFloat!: Scalars['Float'];
-        @TypeGraphQL.Field(type => B, { nullable: true })
+        @graphql.field(type => B, { nullable: true })
         b?: Maybe<B>;
-        @TypeGraphQL.Field(type => B)
+        @graphql.field(type => B)
         mandatoryB!: FixDecorator<B>;
-        @TypeGraphQL.Field(type => [String], { nullable: true })
+        @graphql.field(type => [String], { nullable: true })
         arr?: Maybe<Array<Scalars['String']>>;
-        @TypeGraphQL.Field(type => [String])
+        @graphql.field(type => [String])
         mandatoryArr!: Array<Scalars['String']>;
       }
     `);
@@ -149,22 +150,22 @@ describe('@loopback/graphql-codegen', () => {
 
     const result = await plugin(schema, [], {}, {outputFile: ''});
 
-    expect(strippedString(result.content)).to.eq(`
-      @TypeGraphQL.ObjectType({ implements: ITest })
+    expect(strippedString(result.content)).to.contain(`
+      @graphql.objectType({ implements: ITest })
       export class Test extends ITest {
         __typename?: 'Test';
-        @TypeGraphQL.Field(type => TypeGraphQL.ID, { nullable: true })
+        @graphql.field(type => TypeGraphQL.ID, { nullable: true })
         id?: Maybe<Scalars['ID']>;
-        @TypeGraphQL.Field(type => String)
+        @graphql.field(type => String)
         mandatoryStr!: Scalars['String'];
       }
     `);
 
-    expect(strippedString(result.content)).to.eq(`
+    expect(strippedString(result.content)).to.contain(`
       @TypeGraphQL.InterfaceType()
       export abstract class ITest {
 
-        @TypeGraphQL.Field(type => TypeGraphQL.ID, { nullable: true })
+        @graphql.field(type => TypeGraphQL.ID, { nullable: true })
         id?: Maybe<Scalars['ID']>;
       }
     `);
@@ -195,50 +196,50 @@ describe('@loopback/graphql-codegen', () => {
 
     const result = await plugin(schema, [], {}, {outputFile: ''});
 
-    expect(strippedString(result.content)).to.eq(`
+    expect(strippedString(result.content)).to.contain(`
       @TypeGraphQL.InputType()
       export class A {
 
-        @TypeGraphQL.Field(type => TypeGraphQL.ID, { nullable: true })
+        @graphql.field(type => TypeGraphQL.ID, { nullable: true })
         id?: Maybe<Scalars['ID']>;
 
-        @TypeGraphQL.Field(type => TypeGraphQL.ID)
+        @graphql.field(type => TypeGraphQL.ID)
         mandatoryId!: Scalars['ID'];
 
-        @TypeGraphQL.Field(type => String, { nullable: true })
+        @graphql.field(type => String, { nullable: true })
         str?: Maybe<Scalars['String']>;
 
-        @TypeGraphQL.Field(type => String)
+        @graphql.field(type => String)
         mandatoryStr!: Scalars['String'];
 
-        @TypeGraphQL.Field(type => Boolean, { nullable: true })
+        @graphql.field(type => Boolean, { nullable: true })
         bool?: Maybe<Scalars['Boolean']>;
 
-        @TypeGraphQL.Field(type => Boolean)
+        @graphql.field(type => Boolean)
         mandatoryBool!: Scalars['Boolean'];
 
-        @TypeGraphQL.Field(type => TypeGraphQL.Int, { nullable: true })
+        @graphql.field(type => TypeGraphQL.Int, { nullable: true })
         int?: Maybe<Scalars['Int']>;
 
-        @TypeGraphQL.Field(type => TypeGraphQL.Int)
+        @graphql.field(type => TypeGraphQL.Int)
         mandatoryInt!: Scalars['Int'];
 
-        @TypeGraphQL.Field(type => TypeGraphQL.Float, { nullable: true })
+        @graphql.field(type => TypeGraphQL.Float, { nullable: true })
         float?: Maybe<Scalars['Float']>;
 
-        @TypeGraphQL.Field(type => TypeGraphQL.Float)
+        @graphql.field(type => TypeGraphQL.Float)
         mandatoryFloat!: Scalars['Float'];
 
-        @TypeGraphQL.Field(type => B, { nullable: true })
+        @graphql.field(type => B, { nullable: true })
         b?: Maybe<B>;
 
-        @TypeGraphQL.Field(type => B)
+        @graphql.field(type => B)
         mandatoryB!: FixDecorator<B>;
 
-        @TypeGraphQL.Field(type => [String], { nullable: true })
+        @graphql.field(type => [String], { nullable: true })
         arr?: Maybe<Array<Scalars['String']>>;
 
-        @TypeGraphQL.Field(type => [String])
+        @graphql.field(type => [String])
         mandatoryArr!: Array<Scalars['String']>;
       }
     `);
@@ -272,50 +273,50 @@ describe('@loopback/graphql-codegen', () => {
 
     const result = await plugin(schema, [], {}, {outputFile: ''});
 
-    expect(strippedString(result.content)).to.eq(`
+    expect(strippedString(result.content)).to.contain(`
       @TypeGraphQL.ArgsType()
       export class MutationTestArgs {
 
-        @TypeGraphQL.Field(type => TypeGraphQL.ID, { nullable: true })
+        @graphql.field(type => TypeGraphQL.ID, { nullable: true })
         id?: Maybe<Scalars['ID']>;
 
-        @TypeGraphQL.Field(type => TypeGraphQL.ID)
+        @graphql.field(type => TypeGraphQL.ID)
         mandatoryId!: Scalars['ID'];
 
-        @TypeGraphQL.Field(type => String, { nullable: true })
+        @graphql.field(type => String, { nullable: true })
         str?: Maybe<Scalars['String']>;
 
-        @TypeGraphQL.Field(type => String)
+        @graphql.field(type => String)
         mandatoryStr!: Scalars['String'];
 
-        @TypeGraphQL.Field(type => Boolean, { nullable: true })
+        @graphql.field(type => Boolean, { nullable: true })
         bool?: Maybe<Scalars['Boolean']>;
 
-        @TypeGraphQL.Field(type => Boolean)
+        @graphql.field(type => Boolean)
         mandatoryBool!: Scalars['Boolean'];
 
-        @TypeGraphQL.Field(type => TypeGraphQL.Int, { nullable: true })
+        @graphql.field(type => TypeGraphQL.Int, { nullable: true })
         int?: Maybe<Scalars['Int']>;
 
-        @TypeGraphQL.Field(type => TypeGraphQL.Int)
+        @graphql.field(type => TypeGraphQL.Int)
         mandatoryInt!: Scalars['Int'];
 
-        @TypeGraphQL.Field(type => TypeGraphQL.Float, { nullable: true })
+        @graphql.field(type => TypeGraphQL.Float, { nullable: true })
         float?: Maybe<Scalars['Float']>;
 
-        @TypeGraphQL.Field(type => TypeGraphQL.Float)
+        @graphql.field(type => TypeGraphQL.Float)
         mandatoryFloat!: Scalars['Float'];
 
-        @TypeGraphQL.Field(type => B, { nullable: true })
+        @graphql.field(type => B, { nullable: true })
         b?: Maybe<B>;
 
-        @TypeGraphQL.Field(type => B)
+        @graphql.field(type => B)
         mandatoryB!: FixDecorator<B>;
 
-        @TypeGraphQL.Field(type => [String], { nullable: true })
+        @graphql.field(type => [String], { nullable: true })
         arr?: Maybe<Array<Scalars['String']>>;
 
-        @TypeGraphQL.Field(type => [String])
+        @graphql.field(type => [String])
         mandatoryArr!: Array<Scalars['String']>;
       }
     `);
@@ -339,7 +340,7 @@ describe('@loopback/graphql-codegen', () => {
       {outputFile: ''},
     )) as Types.ComplexPluginOutput;
 
-    expect(strippedString(result.content)).to.eq(`
+    expect(strippedString(result.content)).to.contain(`
         @TypeGraphQL.Foo()
         export class Test {
           __typename?: 'Test';
@@ -349,7 +350,7 @@ describe('@loopback/graphql-codegen', () => {
           mandatoryStr!: Scalars['String'];
         }
       `);
-    expect(strippedString(result.content)).to.eq(`
+    expect(strippedString(result.content)).to.contain(`
         @TypeGraphQL.FooBar()
         export abstract class ITest {
 
@@ -376,13 +377,13 @@ describe('@loopback/graphql-codegen', () => {
       {outputFile: ''},
     )) as Types.ComplexPluginOutput;
 
-    expect(strippedString(result.content)).to.eq(`
-      @TypeGraphQL.ObjectType()
+    expect(strippedString(result.content)).to.contain(`
+      @graphql.objectType()
       export class A {
         __typename?: 'A';
-        @TypeGraphQL.Field(type => Date, { nullable: true })
+        @graphql.field(type => Date, { nullable: true })
         date?: Maybe<Scalars['DateTime']>;
-        @TypeGraphQL.Field(type => Date)
+        @graphql.field(type => Date)
         mandatoryDate!: Scalars['DateTime'];
       }
     `);
@@ -443,183 +444,183 @@ describe('@loopback/graphql-codegen', () => {
 
     const result = await plugin(schema, [], {}, {outputFile: ''});
 
-    expect(strippedString(result.content)).to.eq(`
-      @TypeGraphQL.Field(type => String, { nullable: true })
+    expect(strippedString(result.content)).to.contain(`
+      @graphql.field(type => String, { nullable: true })
       str1?: Maybe<Scalars['String']>;
     `);
 
-    expect(strippedString(result.content)).to.eq(`
-      @TypeGraphQL.Field(type => String)
+    expect(strippedString(result.content)).to.contain(`
+      @graphql.field(type => String)
       str2!: Scalars['String'];
     `);
 
-    expect(strippedString(result.content)).to.eq(`
-      @TypeGraphQL.Field(type => [String], { nullable: 'itemsAndList' })
+    expect(strippedString(result.content)).to.contain(`
+      @graphql.field(type => [String], { nullable: 'itemsAndList' })
       strArr1?: Maybe<Array<Maybe<Scalars['String']>>>;
     `);
 
-    expect(strippedString(result.content)).to.eq(`
-      @TypeGraphQL.Field(type => [String], { nullable: 'items' })
+    expect(strippedString(result.content)).to.contain(`
+      @graphql.field(type => [String], { nullable: 'items' })
       strArr2!: Array<Maybe<Scalars['String']>>;
     `);
 
-    expect(strippedString(result.content)).to.eq(`
-      @TypeGraphQL.Field(type => [String], { nullable: true })
+    expect(strippedString(result.content)).to.contain(`
+      @graphql.field(type => [String], { nullable: true })
       strArr3?: Maybe<Array<Scalars['String']>>;
     `);
 
-    expect(strippedString(result.content)).to.eq(`
-      @TypeGraphQL.Field(type => [String])
+    expect(strippedString(result.content)).to.contain(`
+      @graphql.field(type => [String])
       strArr4!: Array<Scalars['String']>;
     `);
 
-    expect(strippedString(result.content)).to.eq(`
-      @TypeGraphQL.Field(type => TypeGraphQL.Int, { nullable: true })
+    expect(strippedString(result.content)).to.contain(`
+      @graphql.field(type => TypeGraphQL.Int, { nullable: true })
       int1?: Maybe<Scalars['Int']>;
     `);
 
-    expect(strippedString(result.content)).to.eq(`
-      @TypeGraphQL.Field(type => TypeGraphQL.Int)
+    expect(strippedString(result.content)).to.contain(`
+      @graphql.field(type => TypeGraphQL.Int)
       int2!: Scalars['Int'];
     `);
 
-    expect(strippedString(result.content)).to.eq(`
-      @TypeGraphQL.Field(type => [TypeGraphQL.Int], { nullable: 'itemsAndList' })
+    expect(strippedString(result.content)).to.contain(`
+      @graphql.field(type => [TypeGraphQL.Int], { nullable: 'itemsAndList' })
       intArr1?: Maybe<Array<Maybe<Scalars['Int']>>>;
     `);
 
-    expect(strippedString(result.content)).to.eq(`
-      @TypeGraphQL.Field(type => [TypeGraphQL.Int], { nullable: 'items' })
+    expect(strippedString(result.content)).to.contain(`
+      @graphql.field(type => [TypeGraphQL.Int], { nullable: 'items' })
       intArr2!: Array<Maybe<Scalars['Int']>>;
     `);
 
-    expect(strippedString(result.content)).to.eq(`
-      @TypeGraphQL.Field(type => [TypeGraphQL.Int], { nullable: true })
+    expect(strippedString(result.content)).to.contain(`
+      @graphql.field(type => [TypeGraphQL.Int], { nullable: true })
       intArr3?: Maybe<Array<Scalars['Int']>>;
     `);
 
-    expect(strippedString(result.content)).to.eq(`
-      @TypeGraphQL.Field(type => [TypeGraphQL.Int])
+    expect(strippedString(result.content)).to.contain(`
+      @graphql.field(type => [TypeGraphQL.Int])
       intArr4!: Array<Scalars['Int']>;
     `);
 
-    expect(strippedString(result.content)).to.eq(`
-      @TypeGraphQL.Field(type => MyType2, { nullable: true })
+    expect(strippedString(result.content)).to.contain(`
+      @graphql.field(type => MyType2, { nullable: true })
       custom1?: Maybe<MyType2>;
     `);
 
-    expect(strippedString(result.content)).to.eq(`
-      @TypeGraphQL.Field(type => MyType2)
+    expect(strippedString(result.content)).to.contain(`
+      @graphql.field(type => MyType2)
       custom2!: FixDecorator<MyType2>;
     `);
 
-    expect(strippedString(result.content)).to.eq(`
-      @TypeGraphQL.Field(type => [MyType2], { nullable: 'itemsAndList' })
+    expect(strippedString(result.content)).to.contain(`
+      @graphql.field(type => [MyType2], { nullable: 'itemsAndList' })
       customArr1?: Maybe<Array<Maybe<MyType2>>>;
     `);
 
-    expect(strippedString(result.content)).to.eq(`
-      @TypeGraphQL.Field(type => [MyType2], { nullable: 'items' })
+    expect(strippedString(result.content)).to.contain(`
+      @graphql.field(type => [MyType2], { nullable: 'items' })
       customArr2!: Array<Maybe<MyType2>>;
     `);
 
-    expect(strippedString(result.content)).to.eq(`
-      @TypeGraphQL.Field(type => [MyType2], { nullable: true })
+    expect(strippedString(result.content)).to.contain(`
+      @graphql.field(type => [MyType2], { nullable: true })
       customArr3?: Maybe<Array<MyType2>>;
     `);
 
-    expect(strippedString(result.content)).to.eq(`
-      @TypeGraphQL.Field(type => [MyType2])
+    expect(strippedString(result.content)).to.contain(`
+      @graphql.field(type => [MyType2])
       customArr4!: Array<MyType2>;
     `);
 
-    expect(strippedString(result.content)).to.eq(`
-      @TypeGraphQL.Field(type => String, { nullable: true })
+    expect(strippedString(result.content)).to.contain(`
+      @graphql.field(type => String, { nullable: true })
       inputStr1?: Maybe<Scalars['String']>;
     `);
 
-    expect(strippedString(result.content)).to.eq(`
-      @TypeGraphQL.Field(type => String)
+    expect(strippedString(result.content)).to.contain(`
+      @graphql.field(type => String)
       inputStr2!: Scalars['String'];
     `);
 
-    expect(strippedString(result.content)).to.eq(`
-      @TypeGraphQL.Field(type => [String], { nullable: 'itemsAndList' })
+    expect(strippedString(result.content)).to.contain(`
+      @graphql.field(type => [String], { nullable: 'itemsAndList' })
       inputStrArr1?: Maybe<Array<Maybe<Scalars['String']>>>;
     `);
 
-    expect(strippedString(result.content)).to.eq(`
-      @TypeGraphQL.Field(type => [String], { nullable: 'items' })
+    expect(strippedString(result.content)).to.contain(`
+      @graphql.field(type => [String], { nullable: 'items' })
       inputStrArr2!: Array<Maybe<Scalars['String']>>;
     `);
 
-    expect(strippedString(result.content)).to.eq(`
-      @TypeGraphQL.Field(type => [String], { nullable: true })
+    expect(strippedString(result.content)).to.contain(`
+      @graphql.field(type => [String], { nullable: true })
       inputStrArr3?: Maybe<Array<Scalars['String']>>;
     `);
 
-    expect(strippedString(result.content)).to.eq(`
-      @TypeGraphQL.Field(type => [String])
+    expect(strippedString(result.content)).to.contain(`
+      @graphql.field(type => [String])
       inputStrArr4!: Array<Scalars['String']>;
     `);
 
-    expect(strippedString(result.content)).to.eq(`
-      @TypeGraphQL.Field(type => TypeGraphQL.Int, { nullable: true })
+    expect(strippedString(result.content)).to.contain(`
+      @graphql.field(type => TypeGraphQL.Int, { nullable: true })
       inputInt1?: Maybe<Scalars['Int']>;
     `);
 
-    expect(strippedString(result.content)).to.eq(`
-      @TypeGraphQL.Field(type => TypeGraphQL.Int)
+    expect(strippedString(result.content)).to.contain(`
+      @graphql.field(type => TypeGraphQL.Int)
       inputInt2!: Scalars['Int'];
     `);
 
-    expect(strippedString(result.content)).to.eq(`
-      @TypeGraphQL.Field(type => [TypeGraphQL.Int], { nullable: 'itemsAndList' })
+    expect(strippedString(result.content)).to.contain(`
+      @graphql.field(type => [TypeGraphQL.Int], { nullable: 'itemsAndList' })
       inputIntArr1?: Maybe<Array<Maybe<Scalars['Int']>>>;
     `);
 
-    expect(strippedString(result.content)).to.eq(`
-      @TypeGraphQL.Field(type => [TypeGraphQL.Int], { nullable: 'items' })
+    expect(strippedString(result.content)).to.contain(`
+      @graphql.field(type => [TypeGraphQL.Int], { nullable: 'items' })
       inputIntArr2!: Array<Maybe<Scalars['Int']>>;
     `);
 
-    expect(strippedString(result.content)).to.eq(`
-      @TypeGraphQL.Field(type => [TypeGraphQL.Int], { nullable: true })
+    expect(strippedString(result.content)).to.contain(`
+      @graphql.field(type => [TypeGraphQL.Int], { nullable: true })
       inputIntArr3?: Maybe<Array<Scalars['Int']>>;
     `);
 
-    expect(strippedString(result.content)).to.eq(`
-      @TypeGraphQL.Field(type => [TypeGraphQL.Int])
+    expect(strippedString(result.content)).to.contain(`
+      @graphql.field(type => [TypeGraphQL.Int])
       inputIntArr4!: Array<Scalars['Int']>;
     `);
 
-    expect(strippedString(result.content)).to.eq(`
-      @TypeGraphQL.Field(type => MyType2, { nullable: true })
+    expect(strippedString(result.content)).to.contain(`
+      @graphql.field(type => MyType2, { nullable: true })
       inputCustom1?: Maybe<MyType2>;
     `);
 
-    expect(strippedString(result.content)).to.eq(`
-      @TypeGraphQL.Field(type => MyType2)
+    expect(strippedString(result.content)).to.contain(`
+      @graphql.field(type => MyType2)
       inputCustom2!: FixDecorator<MyType2>;
     `);
 
-    expect(strippedString(result.content)).to.eq(`
-      @TypeGraphQL.Field(type => [MyType2], { nullable: 'itemsAndList' })
+    expect(strippedString(result.content)).to.contain(`
+      @graphql.field(type => [MyType2], { nullable: 'itemsAndList' })
       inputCustomArr1?: Maybe<Array<Maybe<MyType2>>>;
     `);
 
-    expect(strippedString(result.content)).to.eq(`
-      @TypeGraphQL.Field(type => [MyType2], { nullable: 'items' })
+    expect(strippedString(result.content)).to.contain(`
+      @graphql.field(type => [MyType2], { nullable: 'items' })
       inputCustomArr2!: Array<Maybe<MyType2>>;
     `);
 
-    expect(strippedString(result.content)).to.eq(`
-      @TypeGraphQL.Field(type => [MyType2], { nullable: true })
+    expect(strippedString(result.content)).to.contain(`
+      @graphql.field(type => [MyType2], { nullable: true })
       inputCustomArr3?: Maybe<Array<MyType2>>;
     `);
 
-    expect(strippedString(result.content)).to.eq(`
-      @TypeGraphQL.Field(type => [MyType2])
+    expect(strippedString(result.content)).to.contain(`
+      @graphql.field(type => [MyType2])
       inputCustomArr4!: Array<MyType2>;
     `);
   });
@@ -663,31 +664,31 @@ describe('@loopback/graphql-codegen', () => {
 
     const result = await plugin(schema, [], {}, {outputFile: ''});
 
-    expect(strippedString(result.content)).to.eq(`
-      @TypeGraphQL.ObjectType({ description: 'Test type description', implements: ITest })
+    expect(strippedString(result.content)).to.contain(`
+      @graphql.objectType({ description: 'Test type description', implements: ITest })
       export class Test extends ITest {
         __typename?: 'Test';
-        @TypeGraphQL.Field(type => TypeGraphQL.ID, { description: 'id field description\\ninside Test class', nullable: true })
+        @graphql.field(type => TypeGraphQL.ID, { description: 'id field description\\ninside Test class', nullable: true })
         id?: Maybe<Scalars['ID']>;
-        @TypeGraphQL.Field(type => String, { description: 'mandatoryStr field description' })
+        @graphql.field(type => String, { description: 'mandatoryStr field description' })
         mandatoryStr!: Scalars['String'];
       }
     `);
 
-    expect(strippedString(result.content)).to.eq(`
+    expect(strippedString(result.content)).to.contain(`
       @TypeGraphQL.InterfaceType({ description: 'ITest interface description' })
       export abstract class ITest {
 
-        @TypeGraphQL.Field(type => TypeGraphQL.ID, { description: 'id field description\\ninside ITest interface', nullable: true })
+        @graphql.field(type => TypeGraphQL.ID, { description: 'id field description\\ninside ITest interface', nullable: true })
         id?: Maybe<Scalars['ID']>;
       }
     `);
 
-    expect(strippedString(result.content)).to.eq(`
+    expect(strippedString(result.content)).to.contain(`
       @TypeGraphQL.InputType({ description: 'TestInput input description' })
       export class TestInput {
 
-        @TypeGraphQL.Field(type => TypeGraphQL.ID, { nullable: true })
+        @graphql.field(type => TypeGraphQL.ID, { nullable: true })
         id?: Maybe<Scalars['ID']>;
       }
     `);
@@ -754,74 +755,74 @@ describe('@loopback/graphql-codegen', () => {
       `TypeGraphQL.registerEnumType(RegularEnum, { name: 'RegularEnum' });`,
     );
 
-    expect(strippedString(result.content)).to.eq(
+    expect(strippedString(result.content)).to.contain(
       `TypeGraphQL.registerEnumType(TypeGraphQlEnum, { name: 'TypeGraphQlEnum' });`,
     );
 
-    expect(strippedString(result.content)).to.eq(
+    expect(strippedString(result.content)).to.contain(
       `export type IRegularInterfaceType = {
         id?: Maybe<Scalars['ID']>;
       };`,
     );
 
-    expect(strippedString(result.content)).to.eq(
+    expect(strippedString(result.content)).to.contain(
       `
       @TypeGraphQL.InterfaceType()
       export abstract class ITypeGraphQlInterfaceType {
-        @TypeGraphQL.Field(type => TypeGraphQL.ID, { nullable: true })
+        @graphql.field(type => TypeGraphQL.ID, { nullable: true })
         id?: Maybe<Scalars['ID']>;
       }`,
     );
 
-    expect(strippedString(result.content)).to.eq(
+    expect(strippedString(result.content)).to.contain(
       `export type RegularType = {
         __typename?: 'RegularType';
         id?: Maybe<Scalars['ID']>;
       };`,
     );
 
-    expect(strippedString(result.content)).to.eq(
-      `@TypeGraphQL.ObjectType()
+    expect(strippedString(result.content)).to.contain(
+      `@graphql.objectType()
       export class TypeGraphQlType {
         __typename?: 'TypeGraphQLType';
-        @TypeGraphQL.Field(type => TypeGraphQL.ID, { nullable: true })
+        @graphql.field(type => TypeGraphQL.ID, { nullable: true })
         id?: Maybe<Scalars['ID']>;
       }`,
     );
 
-    expect(strippedString(result.content)).to.eq(
+    expect(strippedString(result.content)).to.contain(
       `export type RegularInputType = {
         id?: Maybe<Scalars['ID']>;
       };`,
     );
 
-    expect(strippedString(result.content)).to.eq(
+    expect(strippedString(result.content)).to.contain(
       `@TypeGraphQL.InputType()
       export class TypeGraphQlInputType {
-        @TypeGraphQL.Field(type => TypeGraphQL.ID, { nullable: true })
+        @graphql.field(type => TypeGraphQL.ID, { nullable: true })
         id?: Maybe<Scalars['ID']>;
       }`,
     );
 
-    expect(strippedString(result.content)).to.eq(`
+    expect(strippedString(result.content)).to.contain(`
     export type Query = {
       __typename?: 'Query';
       regularFunction: Scalars['Boolean'];
       typeGraphQLFunction: Scalars['Boolean'];
     };`);
 
-    expect(strippedString(result.content)).to.eq(`export type QueryRegularFunctionArgs = {
+    expect(strippedString(result.content)).to.contain(`export type QueryRegularFunctionArgs = {
         mandatoryId: Scalars['ID'];
         optionalId?: InputMaybe<Scalars['ID']>;
       };`);
 
-    expect(strippedString(result.content)).to.eq(` @TypeGraphQL.ArgsType()
+    expect(strippedString(result.content)).to.contain(` @TypeGraphQL.ArgsType()
        export class QueryTypeGraphQlFunctionArgs {
 
-         @TypeGraphQL.Field(type => TypeGraphQL.ID)
+         @graphql.field(type => TypeGraphQL.ID)
          mandatoryId!: Scalars['ID'];
 
-         @TypeGraphQL.Field(type => TypeGraphQL.ID, { nullable: true })
+         @graphql.field(type => TypeGraphQL.ID, { nullable: true })
          optionalId?: Maybe<Scalars['ID']>;
        };`);
   });

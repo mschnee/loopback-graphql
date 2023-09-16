@@ -24,11 +24,9 @@
   "typescript.format.insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces": false,
   "typescript.preferences.quoteStyle": "single",
   "eslint.run": "onSave",
-  "eslint.nodePath": "./packages/build/node_modules",
   "eslint.validate": ["javascript", "typescript"],
   "eslint.format.enable": true,
   "explorer.fileNesting.enabled": true,
-  "explorer.fileNesting.expand": false,
   "explorer.fileNesting.patterns": {
     "*.js": "$(capture).js.map, $(capture).*.js, $(capture)_*.js, $(capture).d.ts",
     "*.mjs": "$(capture).mjs.map, $(capture).*.mjs, $(capture)_*.mjs, $(capture).d.ts",
@@ -42,5 +40,6 @@
     "shims.d.ts": "*.d.ts",
     "tsconfig.json": "tsconfig.*.json"
   },
-  "testExplorer.useNativeTesting": true
+  "testExplorer.useNativeTesting": true,
+  "mochaExplorer.logpanel": true
 }

@@ -1,0 +1,20 @@
+{
+  "folders": [
+    {
+      "name": "✨ @mschnee/loopback-graphql-monorepo",
+      "path": "."
+    },
+    {
+      "name": "📘 Docs",
+      "path": "docs"
+    },
+    {
+      "name": "📦 @mschnee/loopback-dataloader",
+      "path": "packages/dataloader"
+    },
+    {
+      "name": "📦 @mschnee/loopback-graphql",
+      "path": "packages/graphql"
+    }
+  ]
+}

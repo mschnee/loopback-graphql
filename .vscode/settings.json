@@ -42,10 +42,5 @@
     "shims.d.ts": "*.d.ts",
     "tsconfig.json": "tsconfig.*.json"
   },
-  "mochaExplorer.logpanel": true,
-  "testExplorer.codeLens": true,
-  "testExplorer.gutterDecoration": true,
-  "mochaExplorer.files": "packages/**/*.test.ts",
-  "mochaExplorer.nodeArgv": ["--enable-source-maps", "--loader=tsx"],
-  "mochaExplorer.timeout": 0
+  "testExplorer.useNativeTesting": true
 }

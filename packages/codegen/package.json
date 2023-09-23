@@ -14,7 +14,6 @@
     "test:unit:cov": "c8 npm run test"
   },
   "devDependencies": {
-    "@graphql-codegen/testing": "^3.0.0",
     "@graphql-codegen/typescript-type-graphql": "^2.3.6",
     "@types/common-tags": "^1.8.2",
     "@types/expect": "^24.3.0",

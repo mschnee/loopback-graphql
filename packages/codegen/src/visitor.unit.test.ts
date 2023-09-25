@@ -105,33 +105,33 @@ describe('@loopback/graphql-codegen', () => {
       @graphql.objectType()
       export class A {
         __typename?: 'A';
-        @graphql.field(type => TypeGraphQL.ID, { nullable: true })
+        @graphql.field(type => GraphQLID)
         id?: Maybe<Scalars['ID']>;
-        @graphql.field(type => TypeGraphQL.ID)
+        @graphql.field(type => GraphQLID, { isRequired: true }, { isRequired: true })
         mandatoryId!: Scalars['ID'];
-        @graphql.field(type => String, { nullable: true })
+        @graphql.field(type => GraphQLString)
         str?: Maybe<Scalars['String']>;
-        @graphql.field(type => String)
+        @graphql.field(type => GraphQLString, { isRequired: true })
         mandatoryStr!: Scalars['String'];
-        @graphql.field(type => Boolean, { nullable: true })
+        @graphql.field(type => GraphQLBoolean)
         bool?: Maybe<Scalars['Boolean']>;
-        @graphql.field(type => Boolean)
+        @graphql.field(type => GraphQLBoolean, { isRequired: true })
         mandatoryBool!: Scalars['Boolean'];
-        @graphql.field(type => TypeGraphQL.Int, { nullable: true })
+        @graphql.field(type => GraphQLInt)
         int?: Maybe<Scalars['Int']>;
-        @graphql.field(type => TypeGraphQL.Int)
+        @graphql.field(type => GraphQLInt, { isRequired: true })
         mandatoryInt!: Scalars['Int'];
-        @graphql.field(type => TypeGraphQL.Float, { nullable: true })
+        @graphql.field(type => GraphQLFloat)
         float?: Maybe<Scalars['Float']>;
-        @graphql.field(type => TypeGraphQL.Float)
+        @graphql.field(type => GraphQLFloat, { isRequired: true })
         mandatoryFloat!: Scalars['Float'];
-        @graphql.field(type => B, { nullable: true })
-        b?: Maybe<B>;
         @graphql.field(type => B)
+        b?: Maybe<B>;
+        @graphql.field(type => B, { isRequired: true })
         mandatoryB!: FixDecorator<B>;
-        @graphql.field(type => [String], { nullable: true })
+        @graphql.field(type => GraphQLString, { isArray: true })
         arr?: Maybe<Array<Scalars['String']>>;
-        @graphql.field(type => [String])
+        @graphql.field(type => GraphQLString, { isArray, true, isRequired: true })
         mandatoryArr!: Array<Scalars['String']>;
       }
     `);
@@ -156,7 +156,7 @@ describe('@loopback/graphql-codegen', () => {
         __typename?: 'Test';
         @graphql.field(type => TypeGraphQL.ID, { nullable: true })
         id?: Maybe<Scalars['ID']>;
-        @graphql.field(type => String)
+        @graphql.field(type => GraphQLString)
         mandatoryStr!: Scalars['String'];
       }
     `);

@@ -126,7 +126,7 @@ function nameOrOptions<T>(nameOrOpts: string | T, maybeOpts?: T): [string | unde
 export interface TypeFieldDecoratorMetadata {
   typeThunk: NameOrClassOrTypeThunk;
   fieldName: string;
-  required: boolean;
+  required: boolean | 'items' | 'list' | 'both';
   array: boolean;
   description?: Maybe<string>;
   defaultValue?: unknown;
@@ -134,10 +134,18 @@ export interface TypeFieldDecoratorMetadata {
   deprecationReason?: Maybe<string>;
 }
 
-export interface TypeFieldDecoratorOptions {
-  type: NameOrClassOrTypeThunk;
+export type TypeFieldDecoratorOptions = ArrayTypeFieldDecoratorOptions | ScalarTypeFieldDecoratorOptions;
+
+export interface ScalarTypeFieldDecoratorOptions extends BaseTypeFieldDecoratorOptions {
+  array?: false | undefined;
   required?: boolean;
-  array?: boolean;
+}
+export interface ArrayTypeFieldDecoratorOptions extends BaseTypeFieldDecoratorOptions {
+  array: true;
+  required?: 'items' | 'list' | 'both';
+}
+interface BaseTypeFieldDecoratorOptions {
+  type: NameOrClassOrTypeThunk;
   description?: string;
   defaultValue?: unknown;
   deprecated?: boolean;

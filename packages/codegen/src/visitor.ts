@@ -1,5 +1,6 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import {TsVisitor, TypeScriptOperationVariablesToObject} from '@graphql-codegen/typescript';
-
+import {indent, type DeclarationBlock} from '@graphql-codegen/visitor-plugin-common';
 import autoBind from 'auto-bind';
 import {
   EnumTypeDefinitionNode,
@@ -7,14 +8,17 @@ import {
   GraphQLEnumType,
   GraphQLSchema,
   InputObjectTypeDefinitionNode,
-  InputValueDefinitionNode,
-  InterfaceTypeDefinitionNode,
   ObjectTypeDefinitionNode,
+  TypeDefinitionNode,
 } from 'graphql';
 import {LoopbackGraphQLPluginConfig} from './config.js';
 import {FIX_DECORATOR_SIGNATURE, GRAPHQL_TYPES} from './consts.js';
+import {fixDecorator} from './lib/fix-decorator.js';
 import {formatDecoratorOptions} from './lib/format-decorator-options.js';
-import {DecoratorOptions, LoopbackGraphQLPluginParsedConfig} from './types.js';
+import {getDecoratorOptions} from './lib/get-decorator-options.js';
+import {getGraphQLRequiredValue} from './lib/get-graphql-nullable-value.js';
+import {parseType} from './lib/parse-type.js';
+import {LoopbackGraphQLPluginParsedConfig} from './types.js';
 
 export class LoopbackGraphQLVisitor<
   TRawConfig extends LoopbackGraphQLPluginConfig = LoopbackGraphQLPluginConfig,
@@ -76,6 +80,42 @@ export class LoopbackGraphQLVisitor<
     });
   }
 
+  ObjectTypeDefinition(
+    node: ObjectTypeDefinitionNode,
+    key: number | string,
+    parent: {[key: string]: ObjectTypeDefinitionNode},
+  ): string {
+    const isGraphQLType = GRAPHQL_TYPES.includes(node.name as unknown as string);
+    if (!isGraphQLType && !this.hasTypeDecorators(node.name as unknown as string)) {
+      return this.typescriptVisitor.ObjectTypeDefinition(node, key, parent);
+    }
+
+    const typeDecorator = this.config.decoratorName.type;
+    const originalNode = parent[key] as ObjectTypeDefinitionNode;
+
+    const decoratorOptions = getDecoratorOptions(node);
+
+    let declarationBlock: DeclarationBlock;
+    if (isGraphQLType) {
+      declarationBlock = this.typescriptVisitor.getObjectTypeDeclarationBlock(node, originalNode);
+    } else {
+      declarationBlock = this.getObjectTypeDeclarationBlock(node, originalNode);
+
+      // Add type-graphql ObjectType decorator
+      const interfaces = originalNode?.interfaces?.map(i => this.convertName(i));
+      if (interfaces && interfaces.length > 1) {
+        decoratorOptions.implements = `[${interfaces.join(', ')}]`;
+      } else if (interfaces && interfaces.length === 1) {
+        decoratorOptions.implements = interfaces[0];
+      }
+      declarationBlock = declarationBlock.withDecorator(
+        `@graphql.${typeDecorator}(${formatDecoratorOptions(decoratorOptions)})`,
+      );
+    }
+
+    return [declarationBlock.string, this.buildArgumentsBlock(originalNode)].filter(f => f).join('\n\n');
+  }
+
   // eslint-disable-next-line @typescript-eslint/naming-convention
   InputObjectTypeDefinition(node: InputObjectTypeDefinitionNode): string {
     if (!this.hasTypeDecorators(node.name as unknown as string)) {
@@ -84,7 +124,7 @@ export class LoopbackGraphQLVisitor<
 
     const typeDecorator = this.config.decoratorName.input;
 
-    const decoratorOptions = this.getDecoratorOptions(node);
+    const decoratorOptions = getDecoratorOptions(node);
 
     let declarationBlock = this.getInputObjectDeclarationBlock(node);
 
@@ -96,27 +136,49 @@ export class LoopbackGraphQLVisitor<
     return declarationBlock.string;
   }
 
-  getDecoratorOptions(
-    node:
-      | ObjectTypeDefinitionNode
-      | InterfaceTypeDefinitionNode
-      | FieldDefinitionNode
-      | InputObjectTypeDefinitionNode
-      | InputValueDefinitionNode,
-  ): DecoratorOptions {
-    const decoratorOptions: DecoratorOptions = {};
-
-    if (node.description) {
-      // Add description as TypeGraphQL description instead of comment
-      decoratorOptions.description = escapeString(node.description as unknown as string);
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (node as any).description = undefined;
+  FieldDefinition(
+    node: FieldDefinitionNode,
+    key?: number | string,
+    parent?: unknown,
+    path?: unknown,
+    ancestors?: TypeDefinitionNode[],
+  ): string {
+    const parentName = ancestors?.[ancestors.length - 1].name.value;
+    if (parentName && !this.hasTypeDecorators(parentName)) {
+      return this.typescriptVisitor.FieldDefinition(node, key, parent);
     }
 
-    return decoratorOptions;
+    const fieldDecorator = this.config.decoratorName.field;
+    let typeString = node.type as unknown as string;
+
+    const type = parseType(typeString, this.scalars);
+
+    const decoratorOptions = getDecoratorOptions(node);
+
+    if (type.isArray) {
+      decoratorOptions['isArray'] = 'true';
+    }
+
+    const requiredValue = getGraphQLRequiredValue(type);
+    if (requiredValue) {
+      decoratorOptions.isRequired = requiredValue;
+    }
+
+    const decorator =
+      '\n' +
+      indent(`@graphql.${fieldDecorator}(type => ${type.type}, ${formatDecoratorOptions(decoratorOptions, false)})`) +
+      '\n';
+
+    typeString = fixDecorator(type, typeString);
+
+    return (
+      decorator +
+      indent(
+        `${this.config.immutableTypes ? 'readonly ' : ''}${node.name}${type.isRequired ? '!' : '?'}: ${typeString};`,
+      )
+    );
   }
 
-  // eslint-disable-next-line @typescript-eslint/naming-convention
   EnumTypeDefinition(node: EnumTypeDefinitionNode): string {
     if (!this.hasTypeDecorators(node.name as unknown as string)) {
       return this.typescriptVisitor.EnumTypeDefinition(node);
@@ -162,7 +224,4 @@ export class LoopbackGraphQLVisitor<
   public getFixDecoratorDefinition(): string {
     return `${this.getExportPrefix()}${FIX_DECORATOR_SIGNATURE}`;
   }
-}
-function escapeString(arg0: string): string {
-  throw new Error('Function not implemented.');
 }

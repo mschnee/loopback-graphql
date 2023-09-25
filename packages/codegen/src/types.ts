@@ -19,3 +19,11 @@ export interface LoopbackGraphQLPluginParsedConfig extends TypeScriptPluginParse
   decoratorName: DecoratorConfig;
   decorateTypes?: string[];
 }
+
+export interface Type {
+  type: string;
+  isRequired: boolean; // complement ot `isNullable` and closer to the spec.
+  isArray: boolean;
+  isScalar: boolean;
+  areItemsRequired: boolean;
+}

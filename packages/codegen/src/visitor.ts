@@ -116,7 +116,6 @@ export class LoopbackGraphQLVisitor<
     return [declarationBlock.string, this.buildArgumentsBlock(originalNode)].filter(f => f).join('\n\n');
   }
 
-  // eslint-disable-next-line @typescript-eslint/naming-convention
   InputObjectTypeDefinition(node: InputObjectTypeDefinitionNode): string {
     if (!this.hasTypeDecorators(node.name as unknown as string)) {
       return this.typescriptVisitor.InputObjectTypeDefinition(node);

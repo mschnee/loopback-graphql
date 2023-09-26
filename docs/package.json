@@ -24,8 +24,8 @@
     "react-dom": "18.2.0"
   },
   "devDependencies": {
-    "@docusaurus/module-type-aliases": "0.0.0-5678",
-    "@docusaurus/tsconfig": "0.0.0-5678",
+    "@docusaurus/module-type-aliases": "0.0.0-5684",
+    "@docusaurus/tsconfig": "0.0.0-5684",
     "typescript": "5.2.2"
   },
   "browserslist": {

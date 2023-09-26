@@ -13,7 +13,6 @@ import {
 } from 'graphql';
 import {LoopbackGraphQLPluginConfig} from './config.js';
 import {FIX_DECORATOR_SIGNATURE, GRAPHQL_TYPES} from './consts.js';
-import {fixDecorator} from './lib/fix-decorator.js';
 import {formatDecoratorOptions} from './lib/format-decorator-options.js';
 import {getDecoratorOptions} from './lib/get-decorator-options.js';
 import {getGraphQLRequiredValue} from './lib/get-graphql-nullable-value.js';
@@ -148,7 +147,7 @@ export class LoopbackGraphQLVisitor<
     }
 
     const fieldDecorator = this.config.decoratorName.field;
-    let typeString = node.type as unknown as string;
+    const typeString = node.type as unknown as string;
 
     const type = parseType(typeString, this.scalars);
 
@@ -165,10 +164,10 @@ export class LoopbackGraphQLVisitor<
 
     const decorator =
       '\n' +
-      indent(`@graphql.${fieldDecorator}(type => ${type.type}, ${formatDecoratorOptions(decoratorOptions, false)})`) +
+      indent(`@graphql.${fieldDecorator}(type => ${type.type}${formatDecoratorOptions(decoratorOptions, false)})`) +
       '\n';
 
-    typeString = fixDecorator(type, typeString);
+    // typeString = fixDecorator(type, typeString);
 
     return (
       decorator +

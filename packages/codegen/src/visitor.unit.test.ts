@@ -2,10 +2,32 @@
  * Retrieved from https://github.com/dotansimha/graphql-code-generator/blob/a46b8d99c797283d773ec14163c62be9c84d4c2b/packages/plugins/typescript/type-graphql/tests/type-graphql.spec.ts
  */
 import {Types} from '@graphql-codegen/plugin-helpers';
-import {expect} from 'chai';
+import {expect, use} from 'chai';
 import {oneLine} from 'common-tags';
 import {buildSchema} from 'graphql';
 import {plugin} from './index.js';
+
+// @ts-ignore
+import chaiDiff from 'chai-diff';
+use(chaiDiff);
+
+declare global {
+  namespace Chai {
+    interface DifferentFromOpts {
+      showSpace?: boolean;
+      relaxedSpace?: boolean;
+      context?: number;
+    }
+    interface Assertion {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      differentFrom(expected: any, opt?: DifferentFromOpts): Assertion;
+    }
+    interface Assert {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      differentFrom(val: any, exp: any, opt?: DifferentFromOpts, msg?: string): void;
+    }
+  }
+}
 
 function strippedString(received?: string | string[]) {
   if (!received) {
@@ -93,6 +115,7 @@ describe('@loopback/graphql-codegen', () => {
         mandatoryB: B!
         arr: [String!]
         mandatoryArr: [String!]!
+        mandatoryList: [String]!
       }
       type B {
         id: ID
@@ -101,40 +124,66 @@ describe('@loopback/graphql-codegen', () => {
 
     const result = await plugin(schema, [], {}, {outputFile: ''});
 
-    expect(strippedString(result.content)).to.contain(`
-      @graphql.objectType()
-      export class A {
-        __typename?: 'A';
-        @graphql.field(type => GraphQLID)
-        id?: Maybe<Scalars['ID']>;
-        @graphql.field(type => GraphQLID, { isRequired: true }, { isRequired: true })
-        mandatoryId!: Scalars['ID'];
-        @graphql.field(type => GraphQLString)
-        str?: Maybe<Scalars['String']>;
-        @graphql.field(type => GraphQLString, { isRequired: true })
-        mandatoryStr!: Scalars['String'];
-        @graphql.field(type => GraphQLBoolean)
-        bool?: Maybe<Scalars['Boolean']>;
-        @graphql.field(type => GraphQLBoolean, { isRequired: true })
-        mandatoryBool!: Scalars['Boolean'];
-        @graphql.field(type => GraphQLInt)
-        int?: Maybe<Scalars['Int']>;
-        @graphql.field(type => GraphQLInt, { isRequired: true })
-        mandatoryInt!: Scalars['Int'];
-        @graphql.field(type => GraphQLFloat)
-        float?: Maybe<Scalars['Float']>;
-        @graphql.field(type => GraphQLFloat, { isRequired: true })
-        mandatoryFloat!: Scalars['Float'];
-        @graphql.field(type => B)
-        b?: Maybe<B>;
-        @graphql.field(type => B, { isRequired: true })
-        mandatoryB!: FixDecorator<B>;
-        @graphql.field(type => GraphQLString, { isArray: true })
-        arr?: Maybe<Array<Scalars['String']>>;
-        @graphql.field(type => GraphQLString, { isArray, true, isRequired: true })
-        mandatoryArr!: Array<Scalars['String']>;
-      }
-    `);
+    const check = result.content
+      .trim()
+      .split('\n')
+      .map(r => r.trim());
+    const expected = `@graphql.objectType()
+    export class A {
+      __typename?: 'A';
+
+      @graphql.field(type => GraphQLID)
+      id?: Maybe<Scalars['ID']['output']>;
+
+      @graphql.field(type => GraphQLID, { isRequired: true })
+      mandatoryId!: Scalars['ID']['output'];
+
+      @graphql.field(type => GraphQLString)
+      str?: Maybe<Scalars['String']['output']>;
+
+      @graphql.field(type => GraphQLString, { isRequired: true })
+      mandatoryStr!: Scalars['String']['output'];
+
+      @graphql.field(type => GraphQLBoolean)
+      bool?: Maybe<Scalars['Boolean']['output']>;
+
+      @graphql.field(type => GraphQLBoolean, { isRequired: true })
+      mandatoryBool!: Scalars['Boolean']['output'];
+
+      @graphql.field(type => GraphQLInt)
+      int?: Maybe<Scalars['Int']['output']>;
+
+      @graphql.field(type => GraphQLInt, { isRequired: true })
+      mandatoryInt!: Scalars['Int']['output'];
+
+      @graphql.field(type => GraphQLFloat)
+      float?: Maybe<Scalars['Float']['output']>;
+
+      @graphql.field(type => GraphQLFloat, { isRequired: true })
+      mandatoryFloat!: Scalars['Float']['output'];
+
+      @graphql.field(type => B)
+      b?: Maybe<B>;
+
+      @graphql.field(type => B, { isRequired: true })
+      mandatoryB!: B;
+
+      @graphql.field(type => GraphQLString, { isArray: true, isRequired: 'items' })
+      arr?: Maybe<Array<Scalars['String']['output']>>;
+
+      @graphql.field(type => GraphQLString, { isArray: true, isRequired: 'both' })
+      mandatoryArr!: Array<Scalars['String']['output']>;
+
+      @graphql.field(type => GraphQLString, { isArray: true, isRequired: 'list' })
+      mandatoryList!: Array<Maybe<Scalars['String']['output']>>;
+    };`
+      .split('\n')
+      .map(r => r.trim());
+
+    const firstIndex = check.findIndex(i => i.trim() === '@graphql.objectType()');
+    const secondIndex = check.findLastIndex(i => i.trim() === '@graphql.objectType()');
+    const slices = check.slice(firstIndex, secondIndex - 1);
+    expect(slices).to.not.be.differentFrom(expected, {relaxedSpace: true});
   });
 
   it('should generate type-graphql classes implementing type-graphql interfaces for object types', async () => {

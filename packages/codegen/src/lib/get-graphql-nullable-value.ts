@@ -5,7 +5,7 @@ export function getGraphQLRequiredValue(type: Type): string | undefined {
     if (type.areItemsRequired) {
       return "'both'";
     }
-    return 'list';
+    return type.isArray ? "'list'" : 'true';
   }
   if (type.areItemsRequired) {
     return "'items'";

@@ -8,6 +8,7 @@ import {
   GraphQLEnumType,
   GraphQLSchema,
   InputObjectTypeDefinitionNode,
+  InterfaceTypeDefinitionNode,
   ObjectTypeDefinitionNode,
   TypeDefinitionNode,
 } from 'graphql';
@@ -77,6 +78,22 @@ export class LoopbackGraphQLVisitor<
     this.setDeclarationBlockConfig({
       enumNameValueSeparator: ' =',
     });
+  }
+  InterfaceTypeDefinition(node: InterfaceTypeDefinitionNode, key: number | string, parent: any): string {
+    if (!this.hasTypeDecorators(node.name as unknown as string)) {
+      return this.typescriptVisitor.InterfaceTypeDefinition(node, key, parent);
+    }
+
+    const interfaceDecorator = this.config.decoratorName.interface;
+    const originalNode = parent[key] as InterfaceTypeDefinitionNode;
+
+    const decoratorOptions = getDecoratorOptions(node);
+
+    const declarationBlock = this.getInterfaceTypeDeclarationBlock(node, originalNode).withDecorator(
+      `@graphql.${interfaceDecorator}(${formatDecoratorOptions(decoratorOptions)})`,
+    );
+
+    return [declarationBlock.string, this.buildArgumentsBlock(originalNode)].filter(f => f).join('\n\n');
   }
 
   ObjectTypeDefinition(

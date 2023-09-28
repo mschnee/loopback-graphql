@@ -16,10 +16,12 @@
   "devDependencies": {
     "@graphql-codegen/typescript-type-graphql": "^2.3.6",
     "@types/common-tags": "^1.8.2",
+    "@types/diff": "^5.0.5",
     "@types/expect": "^24.3.0",
     "@types/mocha": "^10.0.1",
     "chai-diff": "^1.0.2",
     "common-tags": "^1.8.2",
+    "diff": "^5.1.0",
     "expect": "29.7.0",
     "mocha": "^10.2.0"
   },

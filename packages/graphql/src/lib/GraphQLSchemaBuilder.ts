@@ -9,8 +9,8 @@ import {
   GraphQLSchema,
   GraphQLUnionType,
   getNamedType,
+  isInputType,
   isOutputType,
-  isScalarType,
   type GraphQLFieldConfig,
   type GraphQLInputFieldConfig,
   type GraphQLInputType,
@@ -220,23 +220,31 @@ export class BaseGraphQLSchemaBuilder extends GraphQLSchemaBuilderInterface {
   }
 
   buildInputTypeFieldForSpec(spec: TypeFieldDecoratorMetadata): GraphQLInputFieldConfig {
-    const maybeScalar = typeof spec.typeThunk === 'function' ? spec.typeThunk() : spec.typeThunk;
+    const maybeName = typeof spec.typeThunk === 'function' ? spec.typeThunk() : spec.typeThunk;
     let type: Maybe<GraphQLInputType> = undefined;
-    // input fields must be scalars
-
-    if (isScalarType(maybeScalar)) {
-      type = maybeScalar;
+    if (typeof maybeName === 'function' && 'name' in maybeName) {
+      const gt = this.getTypeForName(maybeName.name);
+      if (isInputType(gt)) {
+        type = gt;
+      }
+    } else if (typeof maybeName === 'string') {
+      const gt = this.getTypeForName(maybeName);
+      if (isInputType(gt)) {
+        type = gt;
+      }
+    } else if (isInputType(maybeName)) {
+      type = maybeName;
     }
 
     if (!type) {
-      const enumSpec = Reflector.getMetadata(DecoratorKeys.EnumObjectClass, maybeScalar);
+      const enumSpec = Reflector.getMetadata(DecoratorKeys.EnumObjectClass, maybeName);
       if (enumSpec) {
         type = this.getEnumForName(enumSpec.name);
       }
     }
 
     if (!type) {
-      throw new Error('Input Fields must be GraphQLScalars or Enumerations');
+      throw new Error('What am I?');
     }
 
     type = spec.required ? new GraphQLNonNull(type) : type;

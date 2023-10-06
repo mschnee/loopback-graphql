@@ -71,4 +71,36 @@ describe('GraphQLSchemaBuilder.build() @inputType', () => {
     expect(printedSdl).to.exist;
     expect(printedSdl).to.contain('input IdentityInput {\n');
   });
+
+  it('Supports a complex input type', async () => {
+    @inputType()
+    class InputTestA {
+      @field({type: () => GraphQLID, required: true})
+      id!: string;
+
+      @field(() => GraphQLString)
+      name?: string;
+    }
+
+    @inputType()
+    class InputTestB {
+      @field({type: () => GraphQLID, required: true})
+      id!: string;
+
+      @field(() => GraphQLString)
+      name?: string;
+
+      @field(() => InputTestB)
+      a?: InputTestA;
+    }
+
+    const builder = new BaseGraphQLSchemaBuilder([InputTestA, InputTestB]);
+
+    let schema: GraphQLSchema | undefined;
+    expect(() => (schema = builder.build())).to.not.throw();
+    expect(schema).to.exist;
+    const printedSdl = printSchema(schema!);
+    expect(printedSdl).to.exist;
+    expect(printedSdl).to.contain('input IdentityInput {\n');
+  });
 });

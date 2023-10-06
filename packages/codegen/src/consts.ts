@@ -1,6 +1,6 @@
-export const MAYBE_REGEX = /^Maybe<(.*?)>$/;
+export const MAYBE_REGEX = /^(?:Input)?Maybe<(.*?)>$/;
 export const ARRAY_REGEX = /^Array<(.*?)>$/;
-export const SCALAR_REGEX = /^Scalars\['(.*?)'\].*$/;
+export const SCALAR_REGEX = /^(?:Input)?Scalars\['(.*?)'\].*$/;
 export const GRAPHQL_TYPES = ['Query', 'Mutation', 'Subscription'];
 export const SCALARS = ['ID', 'String', 'Boolean', 'Int', 'Float'];
 export const TYPE_GRAPHQL_SCALARS = ['ID', 'Int', 'Float'];

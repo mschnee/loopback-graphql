@@ -3,28 +3,8 @@ import {buildSchema} from 'graphql';
 import {plugin} from './index.js';
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
 import chaiDiff from 'chai-diff';
-import {strippedString} from './lib/stripped-string.js';
 use(chaiDiff);
-
-declare global {
-  namespace Chai {
-    interface DifferentFromOpts {
-      showSpace?: boolean;
-      relaxedSpace?: boolean;
-      context?: number;
-    }
-    interface Assertion {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      differentFrom(expected: any, opt?: DifferentFromOpts): Assertion;
-    }
-    interface Assert {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      differentFrom(val: any, exp: any, opt?: DifferentFromOpts, msg?: string): void;
-    }
-  }
-}
 
 describe('Codegen InputType', () => {
   it('should generate type-graphql classes for input types', async () => {
@@ -52,52 +32,59 @@ describe('Codegen InputType', () => {
 
     const result = await plugin(schema, [], {}, {outputFile: ''});
 
-    expect(strippedString(result.content)).to.contain(`
+    const firstIndex = result.content.indexOf('@graphql.inputType()');
+    const secondIndex = result.content.indexOf('@graphql.inputType()', firstIndex + 1);
+    expect(result.content.slice(firstIndex, secondIndex - 1)).to.not.be.differentFrom(
+      `
           @graphql.inputType()
           export class A {
 
-            @graphql.field(type => TypeGraphQL.ID, { nullable: true })
-            id?: Maybe<Scalars['ID']['input']>;
+            @graphql.field(type => GraphQLID)
+            id?: Maybe<Scalars['ID']['output']>;
 
-            @graphql.field(type => TypeGraphQL.ID)
-            mandatoryId!: Scalars['ID']['input'];
+            @graphql.field(type => GraphQLID, { isRequired: true })
+            mandatoryId!: Scalars['ID']['output'];
 
-            @graphql.field(type => String, { nullable: true })
-            str?: Maybe<Scalars['String']['input']>;
+            @graphql.field(type => GraphQLString)
+            str?: Maybe<Scalars['String']['output']>;
 
-            @graphql.field(type => String)
-            mandatoryStr!: Scalars['String']['input'];
+            @graphql.field(type => GraphQLString, { isRequired: true })
+            mandatoryStr!: Scalars['String']['output'];
 
-            @graphql.field(type => Boolean, { nullable: true })
-            bool?: Maybe<Scalars['Boolean']['input']>;
+            @graphql.field(type => GraphQLBoolean)
+            bool?: Maybe<Scalars['Boolean']['output']>;
 
-            @graphql.field(type => Boolean)
-            mandatoryBool!: Scalars['Boolean']['input'];
+            @graphql.field(type => GraphQLBoolean, { isRequired: true })
+            mandatoryBool!: Scalars['Boolean']['output'];
 
-            @graphql.field(type => TypeGraphQL.Int, { nullable: true })
-            int?: Maybe<Scalars['Int']['input']>;
+            @graphql.field(type => GraphQLInt)
+            int?: Maybe<Scalars['Int']['output']>;
 
-            @graphql.field(type => TypeGraphQL.Int)
-            mandatoryInt!: Scalars['Int']['input'];
+            @graphql.field(type => GraphQLInt, { isRequired: true })
+            mandatoryInt!: Scalars['Int']['output'];
 
-            @graphql.field(type => TypeGraphQL.Float, { nullable: true })
-            float?: Maybe<Scalars['Float']['input']>;
+            @graphql.field(type => GraphQLFloat)
+            float?: Maybe<Scalars['Float']['output']>;
 
-            @graphql.field(type => TypeGraphQL.Float)
-            mandatoryFloat!: Scalars['Float']['input'];
-
-            @graphql.field(type => B, { nullable: true })
-            b?: Maybe<B>;
+            @graphql.field(type => GraphQLFloat, { isRequired: true })
+            mandatoryFloat!: Scalars['Float']['output'];
 
             @graphql.field(type => B)
-            mandatoryB!: FixDecorator<B>;
+            b?: Maybe<B>;
 
-            @graphql.field(type => [String], { nullable: true })
-            arr?: Maybe<Array<Scalars['String']['input']>>;
+            @graphql.field(type => B, { isRequired: true })
+            mandatoryB!: B;
 
-            @graphql.field(type => [String])
-            mandatoryArr!: Array<Scalars['String']['input']>;
-          }
-        `);
+            @graphql.field(type => GraphQLString, { isArray: true, isRequired: 'items' })
+            arr?: Maybe<Array<Scalars['String']['output']>>;
+
+            @graphql.field(type => GraphQLString, { isArray: true, isRequired: 'both' })
+            mandatoryArr!: Array<Scalars['String']['output']>;
+
+            @graphql.field(type => GraphQLString, { isArray: true, isRequired: 'list' })
+            mandatoryList!: Array<Maybe<Scalars['String']['output']>>;
+        `,
+      {relaxedSpace: true},
+    );
   });
 });

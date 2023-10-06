@@ -8,12 +8,15 @@ import {
   GraphQLEnumType,
   GraphQLSchema,
   InputObjectTypeDefinitionNode,
+  InputValueDefinitionNode,
   InterfaceTypeDefinitionNode,
   ObjectTypeDefinitionNode,
   TypeDefinitionNode,
+  TypeNode,
 } from 'graphql';
 import {LoopbackGraphQLPluginConfig} from './config.js';
 import {FIX_DECORATOR_SIGNATURE, GRAPHQL_TYPES} from './consts.js';
+import {buildTypeString} from './lib/build-type-string.js';
 import {formatDecoratorOptions} from './lib/format-decorator-options.js';
 import {getDecoratorOptions} from './lib/get-decorator-options.js';
 import {getGraphQLRequiredValue} from './lib/get-graphql-nullable-value.js';
@@ -151,6 +154,46 @@ export class LoopbackGraphQLVisitor<
     return declarationBlock.string;
   }
 
+  InputValueDefinition(
+    node: InputValueDefinitionNode,
+    key?: number | string,
+    parent?: unknown,
+    path?: Array<string | number>,
+    ancestors?: Array<TypeDefinitionNode>,
+  ): string {
+    const parentName = ancestors?.[ancestors.length - 1].name.value;
+    if (parent && !this.hasTypeDecorators(parentName)) {
+      return this.typescriptVisitor.InputValueDefinition(node, key, parent, path, ancestors);
+    }
+
+    const fieldDecorator = this.config.decoratorName.field;
+    const rawType = node.type as TypeNode | string;
+
+    const type = parseType(rawType, this.scalars);
+
+    const decoratorOptions = getDecoratorOptions(node);
+
+    const requiredValue = getGraphQLRequiredValue(type);
+    if (requiredValue) {
+      decoratorOptions.isRequired = requiredValue;
+    }
+
+    const decorator =
+      '\n' +
+      indent(`@graphql.${fieldDecorator}(type => ${type.type}${formatDecoratorOptions(decoratorOptions, false)})`) +
+      '\n';
+
+    const nameString = node.name.kind ? node.name.value : node.name;
+    const typeString = buildTypeString(type);
+
+    return (
+      decorator +
+      indent(
+        `${this.config.immutableTypes ? 'readonly ' : ''}${nameString}${type.isRequired ? '!' : '?'}: ${typeString};`,
+      )
+    );
+  }
+
   FieldDefinition(
     node: FieldDefinitionNode,
     key?: number | string,
@@ -220,8 +263,8 @@ export class LoopbackGraphQLVisitor<
     }
   }
 
-  protected hasTypeDecorators(typeName: string): boolean {
-    if (GRAPHQL_TYPES.includes(typeName)) {
+  protected hasTypeDecorators(typeName?: string): boolean {
+    if (typeName && GRAPHQL_TYPES.includes(typeName)) {
       return false;
     }
 

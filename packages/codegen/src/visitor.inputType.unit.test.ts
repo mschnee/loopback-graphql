@@ -1,5 +1,5 @@
 import {expect, use} from 'chai';
-import * as chaiDiff from 'chai-diff';
+import chaiDiff from 'chai-diff';
 import {buildSchema} from 'graphql';
 import {plugin} from './index.js';
 use(chaiDiff);

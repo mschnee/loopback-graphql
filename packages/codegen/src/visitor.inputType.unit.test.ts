@@ -1,5 +1,5 @@
 import {expect, use} from 'chai';
-import chaiDiff from 'chai-diff';
+import * as chaiDiff from 'chai-diff';
 import {buildSchema} from 'graphql';
 import {plugin} from './index.js';
 use(chaiDiff);
@@ -21,7 +21,7 @@ describe('Codegen InputType', () => {
         b: B
         mandatoryB: B!
         arr: [String!]
-        mandatoryArr: [String!]!
+        mandatoryArr: [String!]!0
       }
       input B {
         id: ID

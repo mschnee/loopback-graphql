@@ -1,9 +1,7 @@
 import {expect, use} from 'chai';
+import chaiDiff from 'chai-diff';
 import {buildSchema} from 'graphql';
 import {plugin} from './index.js';
-
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-import chaiDiff from 'chai-diff';
 use(chaiDiff);
 
 describe('Codegen InputType', () => {

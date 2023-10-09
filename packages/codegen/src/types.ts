@@ -22,6 +22,7 @@ export interface LoopbackGraphQLPluginParsedConfig extends TypeScriptPluginParse
 
 export interface Type {
   type: string;
+  original: string;
   isRequired: boolean; // complement ot `isNullable` and closer to the spec.
   isArray: boolean;
   isScalar: boolean;

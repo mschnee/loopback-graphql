@@ -11,6 +11,7 @@ export function parseType(rawType: TypeNode | string, customScalars: NormalizedS
     if (rawType.kind === 'NamedType') {
       return {
         type: rawType.name.value,
+        original: rawType.name.value,
         isRequired: false,
         isArray: false,
         areItemsRequired: false,
@@ -56,6 +57,7 @@ export function parseType(rawType: TypeNode | string, customScalars: NormalizedS
 
   return {
     type,
+    original: rawType,
     isRequired,
     isArray,
     isScalar,

@@ -6,7 +6,9 @@ import {LoopbackGraphQLVisitor} from './visitor.js';
 
 export * from './visitor.js';
 
-const LB_GRAPHQL_IMPORT = `import * as graphql from '@mschnee/loopback-graphql';export { graphql };`;
+const LB_GRAPHQL_IMPORT = `import * as graphql from '@mschnee/loopback-graphql';
+import { GraphQLString, GraphQLID, GraphQLBoolean, GraphQLInt, GraphQLFloat } from 'graphql';
+export { graphql };`;
 const isDefinitionInterface = (definition: string) => definition.includes('@graphql.interfaceType()');
 
 export const plugin: PluginFunction<LoopbackGraphQLPluginConfig, Types.ComplexPluginOutput> = (

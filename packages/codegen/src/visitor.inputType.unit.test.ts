@@ -21,7 +21,8 @@ describe('Codegen InputType', () => {
         b: B
         mandatoryB: B!
         arr: [String!]
-        mandatoryArr: [String!]!0
+        mandatoryArr: [String!]!
+        mandatoryList: [String]!
       }
       input B {
         id: ID
@@ -32,40 +33,40 @@ describe('Codegen InputType', () => {
 
     const firstIndex = result.content.indexOf('@graphql.inputType()');
     const secondIndex = result.content.indexOf('@graphql.inputType()', firstIndex + 1);
-    expect(result.content.slice(firstIndex, secondIndex - 1)).to.not.be.differentFrom(
+    expect(result.content.slice(firstIndex, secondIndex)).to.not.be.differentFrom(
       `
           @graphql.inputType()
           export class A {
 
             @graphql.field(type => GraphQLID)
-            id?: Maybe<Scalars['ID']['output']>;
+            id?: Maybe<Scalars['ID']['input']>;
 
             @graphql.field(type => GraphQLID, { isRequired: true })
-            mandatoryId!: Scalars['ID']['output'];
+            mandatoryId!: Scalars['ID']['input'];
 
             @graphql.field(type => GraphQLString)
-            str?: Maybe<Scalars['String']['output']>;
+            str?: Maybe<Scalars['String']['input']>;
 
             @graphql.field(type => GraphQLString, { isRequired: true })
-            mandatoryStr!: Scalars['String']['output'];
+            mandatoryStr!: Scalars['String']['input'];
 
             @graphql.field(type => GraphQLBoolean)
-            bool?: Maybe<Scalars['Boolean']['output']>;
+            bool?: Maybe<Scalars['Boolean']['input']>;
 
             @graphql.field(type => GraphQLBoolean, { isRequired: true })
-            mandatoryBool!: Scalars['Boolean']['output'];
+            mandatoryBool!: Scalars['Boolean']['input'];
 
             @graphql.field(type => GraphQLInt)
-            int?: Maybe<Scalars['Int']['output']>;
+            int?: Maybe<Scalars['Int']['input']>;
 
             @graphql.field(type => GraphQLInt, { isRequired: true })
-            mandatoryInt!: Scalars['Int']['output'];
+            mandatoryInt!: Scalars['Int']['input'];
 
             @graphql.field(type => GraphQLFloat)
-            float?: Maybe<Scalars['Float']['output']>;
+            float?: Maybe<Scalars['Float']['input']>;
 
             @graphql.field(type => GraphQLFloat, { isRequired: true })
-            mandatoryFloat!: Scalars['Float']['output'];
+            mandatoryFloat!: Scalars['Float']['input'];
 
             @graphql.field(type => B)
             b?: Maybe<B>;
@@ -74,14 +75,14 @@ describe('Codegen InputType', () => {
             mandatoryB!: B;
 
             @graphql.field(type => GraphQLString, { isArray: true, isRequired: 'items' })
-            arr?: Maybe<Array<Scalars['String']['output']>>;
+            arr?: Maybe<Array<Scalars['String']['input']>>;
 
             @graphql.field(type => GraphQLString, { isArray: true, isRequired: 'both' })
-            mandatoryArr!: Array<Scalars['String']['output']>;
+            mandatoryArr!: Array<Scalars['String']['input']>;
 
             @graphql.field(type => GraphQLString, { isArray: true, isRequired: 'list' })
-            mandatoryList!: Array<Maybe<Scalars['String']['output']>>;
-        `,
+            mandatoryList!: Array<Scalars['String']['input']>;
+          };`,
       {relaxedSpace: true},
     );
   });

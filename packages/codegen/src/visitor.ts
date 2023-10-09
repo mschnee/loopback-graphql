@@ -16,7 +16,7 @@ import {
 } from 'graphql';
 import {LoopbackGraphQLPluginConfig} from './config.js';
 import {FIX_DECORATOR_SIGNATURE, GRAPHQL_TYPES} from './consts.js';
-import {buildTypeString} from './lib/build-type-string.js';
+import {buildInputFieldTypeString} from './lib/build-input-field-type-string.js';
 import {formatDecoratorOptions} from './lib/format-decorator-options.js';
 import {getDecoratorOptions} from './lib/get-decorator-options.js';
 import {getGraphQLRequiredValue} from './lib/get-graphql-nullable-value.js';
@@ -172,7 +172,9 @@ export class LoopbackGraphQLVisitor<
     const type = parseType(rawType, this.scalars);
 
     const decoratorOptions = getDecoratorOptions(node);
-
+    if (type.isArray) {
+      decoratorOptions['isArray'] = 'true';
+    }
     const requiredValue = getGraphQLRequiredValue(type);
     if (requiredValue) {
       decoratorOptions.isRequired = requiredValue;
@@ -184,7 +186,7 @@ export class LoopbackGraphQLVisitor<
       '\n';
 
     const nameString = node.name.kind ? node.name.value : node.name;
-    const typeString = buildTypeString(type);
+    const typeString = buildInputFieldTypeString(type);
 
     return (
       decorator +

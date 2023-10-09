@@ -15,7 +15,7 @@ declare module 'chai-diff' {
   }
 
   const chaiDiff: ChaiDiff;
-  export = chaiDiff;
+  export default chaiDiff;
 }
 
 declare namespace Chai {

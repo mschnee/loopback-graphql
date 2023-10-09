@@ -514,7 +514,7 @@ export class TypeGraphQLVisitor<
 
   protected clearOptional(str: string): string {
     if (str.startsWith('Maybe')) {
-      return str.replace(/Maybe<(.*?)>$/, '$1');
+      return str.replace(/(:?Input)?Maybe<(.*?)>$/, '$1');
     }
 
     return str;

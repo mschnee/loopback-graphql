@@ -103,7 +103,7 @@ describe('Codegen ObjectType', () => {
           mandatoryArr!: Array<Scalars['String']['output']>;
 
           @graphql.field(type => GraphQLString, { isArray: true, isRequired: 'list' })
-          mandatoryList!: Array<Maybe<Scalars['String']['output']>>;
+          mandatoryList!: Array<Scalars['String']['output']>;
         };`
       .split('\n')
       .map(r => r.trim());

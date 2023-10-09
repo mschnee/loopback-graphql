@@ -42,8 +42,8 @@ describe('Codegen ObjectType', () => {
         b: B
         mandatoryB: B!
         arr: [String!]
-        mandatoryArr: [String!]!
-        mandatoryList: [String]!
+        mandatoryArr: [String]!
+        mandatoryArrAndItems: [String!]!
       }
       type B {
         id: ID
@@ -99,11 +99,11 @@ describe('Codegen ObjectType', () => {
           @graphql.field(type => GraphQLString, { isArray: true, isRequired: 'items' })
           arr?: Maybe<Array<Scalars['String']['output']>>;
 
-          @graphql.field(type => GraphQLString, { isArray: true, isRequired: 'both' })
-          mandatoryArr!: Array<Scalars['String']['output']>;
-
           @graphql.field(type => GraphQLString, { isArray: true, isRequired: 'list' })
-          mandatoryList!: Array<Scalars['String']['output']>;
+          mandatoryArr!: Array<Maybe<Scalars['String']['output']>>;
+
+          @graphql.field(type => GraphQLString, { isArray: true, isRequired: 'both' })
+          mandatoryArrAndItems!: Array<Scalars['String']['output']>;
         };`
       .split('\n')
       .map(r => r.trim());

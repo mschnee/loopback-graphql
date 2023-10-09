@@ -21,8 +21,8 @@ describe('Codegen InputType', () => {
         b: B
         mandatoryB: B!
         arr: [String!]
-        mandatoryArr: [String!]!
-        mandatoryList: [String]!
+        mandatoryArr: [String]!
+        mandatoryArrAndItems: [String!]!
       }
       input B {
         id: ID
@@ -77,11 +77,11 @@ describe('Codegen InputType', () => {
             @graphql.field(type => GraphQLString, { isArray: true, isRequired: 'items' })
             arr?: Maybe<Array<Scalars['String']['input']>>;
 
-            @graphql.field(type => GraphQLString, { isArray: true, isRequired: 'both' })
-            mandatoryArr!: Array<Scalars['String']['input']>;
-
             @graphql.field(type => GraphQLString, { isArray: true, isRequired: 'list' })
-            mandatoryList!: Array<Scalars['String']['input']>;
+            mandatoryArr!: Array<Maybe<Scalars['String']['input']>>;
+
+            @graphql.field(type => GraphQLString, { isArray: true, isRequired: 'both' })
+            mandatoryArrAndItems!: Array<Scalars['String']['input']>;
           };`,
       {relaxedSpace: true},
     );

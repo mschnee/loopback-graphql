@@ -13,7 +13,11 @@ export function buildInputFieldTypeString(inputType: Type | string): string {
     typeName = `Scalars['${typeName}']['input']`;
   }
   if (inputType.isArray) {
-    typeName = `Array<${typeName}>`;
+    if (!inputType.areItemsRequired) {
+      typeName = `Array<Maybe<${typeName}>>`;
+    } else {
+      typeName = `Array<${typeName}>`;
+    }
   }
   if (!inputType.isRequired) {
     typeName = `Maybe<${typeName}>`;

@@ -46,7 +46,7 @@
   },
   "homepage": "https://github.com/mschnee/loopback-graphql#readme",
   "devDependencies": {
-    "@commitlint/cli": "18.1.0",
+    "@commitlint/cli": "18.2.0",
     "@commitlint/config-conventional": "18.1.0",
     "@loopback/build": "10.1.3",
     "@loopback/testlab": "6.1.3",

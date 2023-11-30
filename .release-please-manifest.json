@@ -1,4 +1,4 @@
 {
-  "packages/graphql": "0.1.0",
-  "packages/dataloader": "0.1.0"
+  "packages/graphql": "0.2.0",
+  "packages/dataloader": "0.2.0"
 }

@@ -33,7 +33,7 @@ jobs:
       - name: Build Docs
         run: npm run build -w docs
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v2
+        uses: actions/upload-pages-artifact@v3
         with:
           path: 'docs/build'
       - name: Deploy to GitHub Pages

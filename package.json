@@ -52,7 +52,7 @@
     "@loopback/testlab": "7.0.0",
     "@tsconfig/esm": "1.0.5",
     "@tsconfig/node20": "20.1.2",
-    "@types/chai": "4.3.13",
+    "@types/chai": "4.3.14",
     "@types/mocha": "^10.0.1",
     "c8": "9.1.0",
     "chai": "5.1.0",

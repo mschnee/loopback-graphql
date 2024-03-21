@@ -60,7 +60,7 @@
     "mocha": "^10.2.0",
     "rimraf": "^5.0.1",
     "tsx": "3.13.0",
-    "typescript": "5.4.2"
+    "typescript": "5.4.3"
   },
   "dependencies": {
     "@loopback/boot": "7.0.0",

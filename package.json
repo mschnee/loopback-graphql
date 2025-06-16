@@ -67,6 +67,6 @@
     "@loopback/context": "7.0.14",
     "@loopback/core": "6.1.11",
     "@loopback/metadata": "7.0.14",
-    "graphql": "16.8.1"
+    "graphql": "16.11.0"
   }
 }

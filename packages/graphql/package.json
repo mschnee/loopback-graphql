@@ -18,7 +18,7 @@
     "@types/expect": "^24.3.0",
     "@types/mocha": "^10.0.1",
     "expect": "30.0.0",
-    "mocha": "^10.2.0"
+    "mocha": "^11.0.0"
   },
   "peerDependencies": {
     "@loopback/context": "^6.0.0 || ^7.0.0",

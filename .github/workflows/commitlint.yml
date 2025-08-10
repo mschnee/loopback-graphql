@@ -13,7 +13,7 @@ jobs:
       - uses: actions/setup-node@v4
         name: Setup Node.js 20
         with:
-          node-version: 20
+          node-version: 22
           cache: 'npm'
       - name: Print versions
         run: |

@@ -1,4 +1,5 @@
 {
   "packages/graphql": "0.1.0",
-  "packages/dataloader": "0.1.0"
+  "packages/dataloader": "0.1.0",
+  ".": "1.0.0"
 }

@@ -1,6 +1,6 @@
 {
   "name": "@mschnee/loopback-graphql-monorepo",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "type": "module",
   "description": "A loopback container for the graphql reference implementation.",
   "main": "dist/index.js",

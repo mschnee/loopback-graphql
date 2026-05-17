@@ -1,5 +1,5 @@
 {
-  "version": "0.0.1",
+  "version": "0.2.0",
   "name": "@mschnee/loopback-graphql",
   "type": "module",
   "typings": "dist/index.d.ts",
